@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Flame, Snowflake } from 'lucide-react'
+import { Flame, Snowflake, Thermometer } from 'lucide-react'
 import type { RoastIntensity } from '@/types'
 
 interface IntensityDialProps {
@@ -10,16 +10,15 @@ interface IntensityDialProps {
   disabled?: boolean
 }
 
-const INTENSITIES: RoastIntensity[] = ['mild', 'medium', 'brutal']
-
 const INTENSITY_CONFIG = {
   mild: {
     label: 'Mild',
     description: 'Encouraging & supportive',
-    angle: -45,
+    angle: -75,
     color: 'from-cyan-400 to-blue-500',
     glowColor: 'rgba(59, 130, 246, 0.5)',
     textColor: 'text-blue-600',
+    pathLength: 0.17,
   },
   medium: {
     label: 'Medium',
@@ -28,14 +27,16 @@ const INTENSITY_CONFIG = {
     color: 'from-amber-400 to-orange-500',
     glowColor: 'rgba(245, 158, 11, 0.5)',
     textColor: 'text-amber-600',
+    pathLength: 0.5,
   },
   brutal: {
     label: 'Brutal',
     description: 'No mercy',
-    angle: 45,
+    angle: 75,
     color: 'from-orange-500 to-red-600',
     glowColor: 'rgba(239, 68, 68, 0.5)',
     textColor: 'text-red-600',
+    pathLength: 1,
   },
 }
 
@@ -55,15 +56,12 @@ export function IntensityDial({ value, onChange, disabled }: IntensityDialProps)
       </label>
 
       {/* Dial Container */}
-      <div className="relative w-48 h-48">
-        {/* Outer ring with gradient */}
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 shadow-inner" />
-
-        {/* Heat zone indicators */}
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-          {/* Background arc */}
+      <div className="relative w-52 h-32">
+        {/* Arc track */}
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 120 70">
+          {/* Background arc - top semicircle */}
           <path
-            d="M 20 80 A 40 40 0 0 1 80 80"
+            d="M 10 60 A 50 50 0 0 1 110 60"
             fill="none"
             stroke="#e5e7eb"
             strokeWidth="8"
@@ -71,15 +69,13 @@ export function IntensityDial({ value, onChange, disabled }: IntensityDialProps)
           />
           {/* Colored arc based on intensity */}
           <motion.path
-            d="M 20 80 A 40 40 0 0 1 80 80"
+            d="M 10 60 A 50 50 0 0 1 110 60"
             fill="none"
             stroke="url(#dialGradient)"
             strokeWidth="8"
             strokeLinecap="round"
             initial={{ pathLength: 0 }}
-            animate={{
-              pathLength: value === 'mild' ? 0.33 : value === 'medium' ? 0.66 : 1
-            }}
+            animate={{ pathLength: config.pathLength }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
           />
           <defs>
@@ -91,83 +87,92 @@ export function IntensityDial({ value, onChange, disabled }: IntensityDialProps)
           </defs>
         </svg>
 
-        {/* Tick marks and labels */}
-        {INTENSITIES.map((intensity) => {
-          const cfg = INTENSITY_CONFIG[intensity]
-          const isActive = value === intensity
-          return (
-            <button
-              key={intensity}
-              onClick={() => handleClick(intensity)}
-              disabled={disabled}
-              className={`
-                absolute w-12 h-12 rounded-full flex items-center justify-center
-                transition-all duration-300 cursor-pointer
-                ${isActive
-                  ? 'bg-white shadow-lg scale-110 z-10'
-                  : 'bg-gray-50 hover:bg-white hover:shadow-md'
-                }
-                ${disabled ? 'cursor-not-allowed opacity-50' : ''}
-              `}
-              style={{
-                top: intensity === 'medium' ? '8px' : '60px',
-                left: intensity === 'mild' ? '8px' : intensity === 'brutal' ? 'auto' : '50%',
-                right: intensity === 'brutal' ? '8px' : 'auto',
-                transform: intensity === 'medium' ? 'translateX(-50%)' : 'none',
-              }}
-            >
-              {intensity === 'mild' && <Snowflake className={`w-5 h-5 ${isActive ? 'text-blue-500' : 'text-gray-400'}`} />}
-              {intensity === 'medium' && <span className={`text-lg ${isActive ? '' : 'grayscale opacity-50'}`}>🌡️</span>}
-              {intensity === 'brutal' && <Flame className={`w-5 h-5 ${isActive ? 'text-red-500' : 'text-gray-400'}`} />}
-            </button>
-          )
-        })}
-
-        {/* Center dial knob */}
-        <motion.div
-          className="absolute top-1/2 left-1/2 w-20 h-20 -mt-10 -ml-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 shadow-xl flex items-center justify-center cursor-pointer"
-          animate={{
-            rotate: config.angle,
-            boxShadow: `0 0 30px ${config.glowColor}`,
-          }}
-          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-          style={{ transformOrigin: 'center center' }}
+        {/* Mild button - left side of arc */}
+        <button
+          onClick={() => handleClick('mild')}
+          disabled={disabled}
+          className={`
+            absolute w-10 h-10 rounded-full flex items-center justify-center
+            transition-all duration-300 cursor-pointer
+            ${value === 'mild'
+              ? 'bg-white shadow-lg scale-110 z-10 ring-2 ring-blue-400'
+              : 'bg-gray-50 hover:bg-white hover:shadow-md'
+            }
+            ${disabled ? 'cursor-not-allowed opacity-50' : ''}
+          `}
+          style={{ left: '8px', top: '55%', transform: 'translateY(-50%)' }}
         >
-          {/* Knob indicator line */}
-          <div className="absolute top-2 left-1/2 -ml-0.5 w-1 h-4 rounded-full bg-gradient-to-b from-white to-gray-300" />
+          <Snowflake className={`w-5 h-5 ${value === 'mild' ? 'text-blue-500' : 'text-gray-400'}`} />
+        </button>
 
-          {/* Inner circle */}
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center">
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className={`w-8 h-8 rounded-full bg-gradient-to-br ${config.color} shadow-inner`}
-            />
-          </div>
+        {/* Medium button - top of arc */}
+        <button
+          onClick={() => handleClick('medium')}
+          disabled={disabled}
+          className={`
+            absolute w-10 h-10 rounded-full flex items-center justify-center
+            transition-all duration-300 cursor-pointer
+            ${value === 'medium'
+              ? 'bg-white shadow-lg scale-110 z-10 ring-2 ring-amber-400'
+              : 'bg-gray-50 hover:bg-white hover:shadow-md'
+            }
+            ${disabled ? 'cursor-not-allowed opacity-50' : ''}
+          `}
+          style={{ left: '50%', top: '-8px', transform: 'translateX(-50%)' }}
+        >
+          <Thermometer className={`w-5 h-5 ${value === 'medium' ? 'text-amber-500' : 'text-gray-400'}`} />
+        </button>
+
+        {/* Brutal button - right side of arc */}
+        <button
+          onClick={() => handleClick('brutal')}
+          disabled={disabled}
+          className={`
+            absolute w-10 h-10 rounded-full flex items-center justify-center
+            transition-all duration-300 cursor-pointer
+            ${value === 'brutal'
+              ? 'bg-white shadow-lg scale-110 z-10 ring-2 ring-red-400'
+              : 'bg-gray-50 hover:bg-white hover:shadow-md'
+            }
+            ${disabled ? 'cursor-not-allowed opacity-50' : ''}
+          `}
+          style={{ right: '8px', top: '55%', transform: 'translateY(-50%)' }}
+        >
+          <Flame className={`w-5 h-5 ${value === 'brutal' ? 'text-red-500' : 'text-gray-400'}`} />
+        </button>
+
+        {/* Needle/pointer */}
+        <motion.div
+          className="absolute bottom-0 left-1/2 origin-bottom"
+          style={{ marginLeft: '-2px' }}
+          animate={{ rotate: config.angle }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+        >
+          <div className={`w-1 h-14 rounded-full bg-gradient-to-t ${config.color} shadow-lg`} />
+          <motion.div
+            className={`absolute -bottom-2 left-1/2 w-5 h-5 -ml-2.5 rounded-full bg-gradient-to-br ${config.color} shadow-lg`}
+            animate={{ boxShadow: `0 0 20px ${config.glowColor}` }}
+          />
         </motion.div>
 
         {/* Flame particles for brutal mode */}
         {value === 'brutal' && (
-          <div className="absolute inset-0 pointer-events-none">
-            {[...Array(5)].map((_, i) => (
+          <div className="absolute inset-0 pointer-events-none overflow-visible">
+            {[...Array(3)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute w-2 h-2 bg-orange-500 rounded-full"
-                initial={{
-                  x: 96,
-                  y: 96,
-                  opacity: 0,
-                }}
+                style={{ left: '50%', bottom: '0' }}
                 animate={{
-                  x: [96, 96 + (Math.random() - 0.5) * 40],
-                  y: [96, 96 - 30 - Math.random() * 20],
+                  x: [(i - 1) * 10, (i - 1) * 15],
+                  y: [0, -40],
                   opacity: [0, 1, 0],
                   scale: [0.5, 1, 0],
                 }}
                 transition={{
                   repeat: Infinity,
-                  duration: 1 + Math.random() * 0.5,
-                  delay: i * 0.2,
+                  duration: 1,
+                  delay: i * 0.3,
                 }}
               />
             ))}
@@ -180,7 +185,7 @@ export function IntensityDial({ value, onChange, disabled }: IntensityDialProps)
         key={value}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mt-4 text-center"
+        className="mt-6 text-center"
       >
         <p className={`text-xl font-bold ${config.textColor}`}>
           {config.label}

@@ -44,39 +44,44 @@ export function DropZone({
 
   return (
     <div className="space-y-6">
-      {/* Intensity Dial */}
-      <IntensityDial
-        value={intensity}
-        onChange={onIntensityChange}
-        disabled={disabled}
-      />
+      {/* Settings Row - stacked on mobile, side by side on desktop */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+        {/* Industry Selector - left on desktop */}
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Industry Focus <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {INDUSTRY_OPTIONS.map(({ value, label, icon: Icon }) => (
+              <motion.button
+                key={value}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => onIndustryChange(value)}
+                disabled={disabled}
+                className={`
+                  flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-200 text-sm
+                  ${industry === value
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                  }
+                  ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                `}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="font-medium">{label}</span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
 
-      {/* Industry Selector */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Industry Focus <span className="text-gray-400 font-normal">(optional)</span>
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {INDUSTRY_OPTIONS.map(({ value, label, icon: Icon }) => (
-            <motion.button
-              key={value}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => onIndustryChange(value)}
-              disabled={disabled}
-              className={`
-                flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200
-                ${industry === value
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                }
-                ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-              `}
-            >
-              <Icon className="w-4 h-4" />
-              <span className="text-sm font-medium">{label}</span>
-            </motion.button>
-          ))}
+        {/* Intensity Dial - right on desktop */}
+        <div className="flex-shrink-0">
+          <IntensityDial
+            value={intensity}
+            onChange={onIntensityChange}
+            disabled={disabled}
+          />
         </div>
       </div>
 
