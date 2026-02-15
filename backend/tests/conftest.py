@@ -8,13 +8,16 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.db.base import Base
-from app.db.models import User, Resume, Roast  # noqa: F401
+from app.db.models import Roast  # noqa: F401
 from app.main import app
+from app.core.rate_limiter import limiter
 from app.api.deps import get_db
-from app.core.security import get_password_hash, create_access_token
 
 # Use SQLite for testing
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+
+# Disable rate limiting for tests by setting enabled=False
+limiter.enabled = False
 
 engine = create_async_engine(TEST_DATABASE_URL, echo=False)
 async_session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
@@ -53,29 +56,6 @@ async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
         yield ac
 
     app.dependency_overrides.clear()
-
-
-@pytest_asyncio.fixture
-async def test_user(db_session: AsyncSession) -> User:
-    user = User(
-        email="test@example.com",
-        hashed_password=get_password_hash("testpassword123"),
-        full_name="Test User",
-    )
-    db_session.add(user)
-    await db_session.commit()
-    await db_session.refresh(user)
-    return user
-
-
-@pytest_asyncio.fixture
-async def auth_token(test_user: User) -> str:
-    return create_access_token(data={"sub": str(test_user.id)})
-
-
-@pytest_asyncio.fixture
-async def auth_headers(auth_token: str) -> dict[str, str]:
-    return {"Authorization": f"Bearer {auth_token}"}
 
 
 @pytest.fixture

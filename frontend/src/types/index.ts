@@ -17,6 +17,13 @@ export interface ScoreBreakdown {
   ats: number;
 }
 
+export interface Badge {
+  id: string;
+  name: string;
+  icon: string;
+  description?: string;
+}
+
 export interface RoastResponse {
   id: string;
   share_id: string;
@@ -27,7 +34,11 @@ export interface RoastResponse {
   suggestions: Suggestion[];
   ats_tips: string[];
   created_at: string;
-  resume_id?: string;
+  intensity: RoastIntensity;
+  industry?: string;
+  badges: Badge[];
+  is_headline_public: boolean;
+  reactions: Record<string, number>;
   // Legacy field for backwards compatibility
   share_url?: string;
   roast?: {
@@ -36,71 +47,32 @@ export interface RoastResponse {
   };
 }
 
+export type RoastIntensity = 'mild' | 'medium' | 'brutal';
+export type Industry = 'tech' | 'finance' | 'creative' | 'healthcare' | 'general';
+export type ReactionType = 'fire' | 'crying_laughing' | 'ouch' | 'facts' | 'survived';
+
 export interface UploadState {
   file: File | null;
   isUploading: boolean;
   error: string | null;
 }
 
-// Auth types
-export interface User {
-  id: string;
-  email: string;
-  full_name: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
+export interface RoastOptions {
+  intensity: RoastIntensity;
+  industry: Industry;
 }
 
-export interface AuthState {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface SignupRequest {
-  email: string;
-  password: string;
-  full_name: string;
-}
-
-export interface TokenResponse {
-  access_token: string;
-  token_type: string;
-}
-
-// Resume types
-export interface Resume {
-  id: string;
-  filename: string;
-  version: number;
-  is_latest: boolean;
-  created_at: string;
-}
-
-export interface ResumeListResponse {
-  resumes: Resume[];
-  total: number;
-}
-
-// Roast history types
-export interface RoastHistoryItem {
-  id: string;
-  share_id: string;
-  score: number;
+// Hot takes
+export interface HotTake {
   headline: string;
-  created_at: string;
-  resume_filename?: string;
-  resume_version?: number;
+  score: number;
 }
 
-export interface RoastHistoryResponse {
-  roasts: RoastHistoryItem[];
-  total: number;
+export interface HotTakesResponse {
+  hot_takes: HotTake[];
+}
+
+// Reactions
+export interface ReactionResponse {
+  reactions: Record<string, number>;
 }

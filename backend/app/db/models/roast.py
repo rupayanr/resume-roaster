@@ -2,8 +2,8 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import String, Integer, DateTime, Text, ForeignKey, JSON
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, Integer, DateTime, Text, JSON, Boolean
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
 from app.db.base import Base, GUID
@@ -14,12 +14,6 @@ class Roast(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(
         GUID(), primary_key=True, default=uuid.uuid4
-    )
-    resume_id: Mapped[uuid.UUID | None] = mapped_column(
-        GUID(),
-        ForeignKey("resumes.id", ondelete="CASCADE"),
-        nullable=True,
-        index=True,
     )
     share_id: Mapped[str] = mapped_column(String(32), unique=True, index=True)
     score: Mapped[int] = mapped_column(Integer)
@@ -32,5 +26,9 @@ class Roast(Base):
         DateTime(timezone=True), server_default=func.now()
     )
 
-    # Relationships
-    resume: Mapped["Resume | None"] = relationship("Resume", back_populates="roasts")
+    # Roasting features
+    intensity: Mapped[str] = mapped_column(String(16), default="medium")
+    industry: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    badges: Mapped[list[Any]] = mapped_column(JSON, default=list)
+    is_headline_public: Mapped[bool] = mapped_column(Boolean, default=False)
+    reactions: Mapped[dict[str, int]] = mapped_column(JSON, default=dict)

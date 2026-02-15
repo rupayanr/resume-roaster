@@ -48,17 +48,30 @@ class TestRoastEndpoint:
         assert response.status_code == 400
         assert "PDF" in response.json()["detail"]
 
+    async def test_roast_endpoint_validates_pdf_magic_bytes(self, client: AsyncClient):
+        """Test that files with .pdf extension but wrong magic bytes are rejected."""
+        # Create fake PDF - has .pdf extension but wrong content
+        fake_pdf = b"This is not a real PDF, just renamed"
+
+        response = await client.post(
+            "/api/v1/roast",
+            files={"file": ("resume.pdf", BytesIO(fake_pdf), "application/pdf")},
+        )
+
+        assert response.status_code == 400
+        assert "Invalid PDF" in response.json()["detail"]
+
     async def test_roast_endpoint_rejects_large_file(self, client: AsyncClient):
         """Test that files exceeding max size are rejected."""
-        # Create a file larger than 5MB (default limit)
-        large_content = b"x" * (6 * 1024 * 1024)  # 6MB
+        # Create a file larger than 5MB (default limit) with PDF magic bytes
+        large_content = b"%PDF" + b"x" * (6 * 1024 * 1024)  # 6MB+ with PDF header
 
         response = await client.post(
             "/api/v1/roast",
             files={"file": ("resume.pdf", BytesIO(large_content), "application/pdf")},
         )
 
-        assert response.status_code == 400
+        assert response.status_code == 413  # Request Entity Too Large
         assert "large" in response.json()["detail"].lower()
 
     @patch("app.api.routes.roast.extract_text_from_pdf")
@@ -141,6 +154,17 @@ class TestGetRoastEndpoint:
 
     async def test_get_roast_returns_404_for_unknown_id(self, client: AsyncClient):
         """Test that unknown roast ID returns 404."""
-        response = await client.get("/api/v1/roast/unknown_share_id")
+        response = await client.get("/api/v1/roast/unknown_share_id_123")
 
         assert response.status_code == 404
+
+    async def test_get_roast_validates_share_id_format(self, client: AsyncClient):
+        """Test that invalid share_id format is rejected."""
+        # Test too short
+        response = await client.get("/api/v1/roast/short")
+        assert response.status_code == 400
+        assert "Invalid share ID" in response.json()["detail"]
+
+        # Test with invalid characters
+        response = await client.get("/api/v1/roast/invalid!@#$%^&*()")
+        assert response.status_code == 400

@@ -1,13 +1,11 @@
 import axios from 'axios';
 import type {
   RoastResponse,
-  TokenResponse,
-  User,
-  LoginRequest,
-  SignupRequest,
-  ResumeListResponse,
-  Resume,
-  RoastHistoryResponse,
+  RoastIntensity,
+  Industry,
+  HotTakesResponse,
+  ReactionResponse,
+  ReactionType,
 } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -16,47 +14,16 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
-// Token management
-export function setAuthToken(token: string | null) {
-  if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    localStorage.setItem('token', token);
-  } else {
-    delete api.defaults.headers.common['Authorization'];
-    localStorage.removeItem('token');
-  }
-}
-
-export function getStoredToken(): string | null {
-  return localStorage.getItem('token');
-}
-
-// Initialize token from storage
-const storedToken = getStoredToken();
-if (storedToken) {
-  setAuthToken(storedToken);
-}
-
-// Auth API
-export async function signup(data: SignupRequest): Promise<User> {
-  const response = await api.post<User>('/api/v1/auth/signup', data);
-  return response.data;
-}
-
-export async function login(data: LoginRequest): Promise<TokenResponse> {
-  const response = await api.post<TokenResponse>('/api/v1/auth/login', data);
-  return response.data;
-}
-
-export async function getCurrentUser(): Promise<User> {
-  const response = await api.get<User>('/api/v1/auth/me');
-  return response.data;
-}
-
 // Resume API
-export async function uploadResume(file: File): Promise<RoastResponse> {
+export async function uploadResume(
+  file: File,
+  intensity: RoastIntensity = 'medium',
+  industry: Industry = 'general'
+): Promise<RoastResponse> {
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('intensity', intensity);
+  formData.append('industry', industry);
 
   const response = await api.post<RoastResponse>('/api/v1/roast', formData, {
     headers: {
@@ -72,29 +39,30 @@ export async function getRoast(shareId: string): Promise<RoastResponse> {
   return response.data;
 }
 
-export async function getMyRoasts(): Promise<RoastHistoryResponse> {
-  const response = await api.get<RoastHistoryResponse>('/api/v1/my-roasts');
-  return response.data;
-}
-
-// Resumes API
-export async function listResumes(): Promise<ResumeListResponse> {
-  const response = await api.get<ResumeListResponse>('/api/v1/resumes');
-  return response.data;
-}
-
-export async function getResume(id: string): Promise<Resume> {
-  const response = await api.get<Resume>(`/api/v1/resumes/${id}`);
-  return response.data;
-}
-
-export async function downloadResume(id: string): Promise<Blob> {
-  const response = await api.get(`/api/v1/resumes/${id}/download`, {
-    responseType: 'blob',
+// Hot takes API
+export async function getHotTakes(limit: number = 10): Promise<HotTakesResponse> {
+  const response = await api.get<HotTakesResponse>('/api/v1/hot-takes', {
+    params: { limit },
   });
   return response.data;
 }
 
-export async function deleteResume(id: string): Promise<void> {
-  await api.delete(`/api/v1/resumes/${id}`);
+// Toggle public headline
+export async function togglePublicHeadline(shareId: string, isPublic: boolean): Promise<void> {
+  await api.patch(`/api/v1/roast/${shareId}/public`, null, {
+    params: { is_public: isPublic },
+  });
+}
+
+// Reactions API
+export async function addReaction(shareId: string, reaction: ReactionType): Promise<ReactionResponse> {
+  const response = await api.post<ReactionResponse>(`/api/v1/roast/${shareId}/react`, {
+    reaction,
+  });
+  return response.data;
+}
+
+// Get OG image URL
+export function getOgImageUrl(shareId: string): string {
+  return `${API_URL}/api/v1/roast/${shareId}/og-image`;
 }

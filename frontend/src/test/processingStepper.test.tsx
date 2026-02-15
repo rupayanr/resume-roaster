@@ -45,4 +45,39 @@ describe('ProcessingStepper', () => {
     const fileNameElement = screen.getByText(longFileName)
     expect(fileNameElement).toHaveClass('truncate')
   })
+
+  it('shows current step with blue styling', () => {
+    const { container } = render(<ProcessingStepper fileName="test.pdf" isProcessing={true} />)
+    expect(container.querySelector('.bg-blue-50')).toBeInTheDocument()
+    expect(container.querySelector('.bg-blue-600')).toBeInTheDocument()
+  })
+
+  it('shows inactive steps with gray styling', () => {
+    const { container } = render(<ProcessingStepper fileName="test.pdf" isProcessing={true} />)
+    expect(container.querySelector('.bg-gray-50')).toBeInTheDocument()
+    expect(container.querySelector('.bg-gray-300')).toBeInTheDocument()
+  })
+
+  it('shows file icon', () => {
+    const { container } = render(<ProcessingStepper fileName="test.pdf" isProcessing={true} />)
+    expect(container.querySelector('.bg-blue-100')).toBeInTheDocument()
+  })
+
+  it('has progress bar for current step', () => {
+    const { container } = render(<ProcessingStepper fileName="test.pdf" isProcessing={true} />)
+    expect(container.querySelector('.bg-blue-600')).toBeInTheDocument()
+  })
+
+  it('renders step icons', () => {
+    const { container } = render(<ProcessingStepper fileName="test.pdf" isProcessing={true} />)
+    // Each step has an icon in a rounded-full container
+    const iconContainers = container.querySelectorAll('.rounded-full')
+    expect(iconContainers.length).toBeGreaterThan(0)
+  })
+
+  it('renders step borders', () => {
+    const { container } = render(<ProcessingStepper fileName="test.pdf" isProcessing={true} />)
+    const borderedElements = container.querySelectorAll('.border')
+    expect(borderedElements.length).toBeGreaterThan(0)
+  })
 })

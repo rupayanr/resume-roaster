@@ -23,6 +23,13 @@ class ScoreBreakdown(BaseModel):
     ats: int
 
 
+class Badge(BaseModel):
+    id: str
+    name: str
+    icon: str
+    description: str | None = None
+
+
 class RoastResponse(BaseModel):
     id: UUID
     share_id: str
@@ -33,23 +40,27 @@ class RoastResponse(BaseModel):
     suggestions: list[Suggestion]
     ats_tips: list[str]
     created_at: datetime
-    resume_id: UUID | None = None
+    intensity: str = "medium"
+    industry: str | None = None
+    badges: list[Badge] = []
+    is_headline_public: bool = False
+    reactions: dict[str, int] = {}
 
     model_config = {"from_attributes": True}
 
 
-class RoastHistoryItem(BaseModel):
-    id: UUID
-    share_id: str
-    score: int
+class HotTake(BaseModel):
     headline: str
-    created_at: datetime
-    resume_filename: str | None = None
-    resume_version: int | None = None
-
-    model_config = {"from_attributes": True}
+    score: int
 
 
-class RoastHistoryResponse(BaseModel):
-    roasts: list[RoastHistoryItem]
-    total: int
+class HotTakesResponse(BaseModel):
+    hot_takes: list[HotTake]
+
+
+class ReactionRequest(BaseModel):
+    reaction: str
+
+
+class ReactionResponse(BaseModel):
+    reactions: dict[str, int]

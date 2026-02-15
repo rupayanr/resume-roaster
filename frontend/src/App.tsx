@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Container } from './components/Layout/Container';
 import { Navbar } from './components/Layout/Navbar';
@@ -6,25 +7,25 @@ import { FilePreview } from './components/Upload/FilePreview';
 import { RoastCard } from './components/Roast/RoastCard';
 import { ShareButton } from './components/Share/ShareButton';
 import { ProcessingStepper } from './components/Processing/ProcessingStepper';
-import { ProtectedRoute } from './components/Auth/ProtectedRoute';
+import { HotTakesCarousel } from './components/HotTakes/HotTakesCarousel';
 import { useFileUpload } from './hooks/useFileUpload';
 import { useRoast } from './hooks/useRoast';
-import { useAuth } from './hooks/useAuth';
-import { LoginPage } from './pages/Login';
-import { SignupPage } from './pages/Signup';
-import { DashboardPage } from './pages/Dashboard';
 import { SharedRoastPage } from './pages/SharedRoast';
-import { ArrowLeft, AlertCircle, FileSearch } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Flame } from 'lucide-react';
+import type { RoastIntensity, Industry } from './types';
 
 function HomePage() {
   const { file, error: uploadError, setFile, setUploading, reset: resetFile } = useFileUpload();
   const { roast, isLoading, error: roastError, submitResume, reset: resetRoast } = useRoast();
-  const { isAuthenticated } = useAuth();
+
+  // Roast options state
+  const [intensity, setIntensity] = useState<RoastIntensity>('medium');
+  const [industry, setIndustry] = useState<Industry>('general');
 
   const handleUpload = async (uploadedFile: File) => {
     setFile(uploadedFile);
     setUploading(true);
-    await submitResume(uploadedFile);
+    await submitResume(uploadedFile, intensity, industry);
     setUploading(false);
   };
 
@@ -48,30 +49,35 @@ function HomePage() {
   return (
     <Container>
       {/* Header */}
-      <header className="text-center mb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium mb-4">
-          <FileSearch className="w-3.5 h-3.5" />
-          AI-Powered Analysis
+      <header className="text-center mb-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-medium mb-4">
+          <Flame className="w-3.5 h-3.5" />
+          AI-Powered Roast
         </div>
         <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
-          Resume Analyzer
+          Resume Roaster
         </h1>
         <p className="text-lg text-gray-600 mt-3 max-w-xl mx-auto">
-          Get professional feedback and actionable suggestions to improve your resume
-          {!isAuthenticated && (
-            <span className="block text-sm mt-2 text-blue-600">
-              Sign up to save your history and track improvements
-            </span>
-          )}
+          Get brutally honest feedback and actionable suggestions to improve your resume
         </p>
       </header>
 
       {!transformedRoast ? (
-        <div className="max-w-2xl mx-auto space-y-4">
+        <div className="max-w-2xl mx-auto space-y-6">
+          {/* Hot Takes Carousel */}
+          {!isLoading && !file && <HotTakesCarousel />}
+
           {/* Show upload UI only when not processing */}
           {!isLoading && (
             <>
-              <DropZone onUpload={handleUpload} disabled={isLoading} />
+              <DropZone
+                onUpload={handleUpload}
+                disabled={isLoading}
+                intensity={intensity}
+                industry={industry}
+                onIntensityChange={setIntensity}
+                onIndustryChange={setIndustry}
+              />
 
               {file && (
                 <FilePreview
@@ -112,9 +118,13 @@ function HomePage() {
               className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              Analyze Another
+              Roast Another
             </button>
-            <ShareButton shareUrl={transformedRoast.share_url} />
+            <ShareButton
+              shareUrl={transformedRoast.share_url}
+              headline={transformedRoast.headline}
+              score={transformedRoast.score}
+            />
           </div>
 
           <RoastCard roast={transformedRoast} />
@@ -124,7 +134,7 @@ function HomePage() {
       {/* Footer */}
       <footer className="mt-16 text-center">
         <p className="text-xs text-gray-400">
-          Powered by Llama 3.2 running locally via Ollama
+          Powered by Groq AI
         </p>
       </footer>
     </Container>
@@ -137,17 +147,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
         <Route path="/r/:shareId" element={<SharedRoastPage />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
       </Routes>
     </div>
   );

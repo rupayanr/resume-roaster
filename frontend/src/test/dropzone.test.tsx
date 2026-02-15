@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
 import { DropZone } from '../components/Upload/DropZone'
 
 describe('DropZone', () => {
@@ -35,15 +35,73 @@ describe('DropZone', () => {
     const file = new File(['pdf content'], 'resume.pdf', { type: 'application/pdf' })
     const input = document.querySelector('input[type="file"]') as HTMLInputElement
 
-    Object.defineProperty(input, 'files', {
-      value: [file],
+    await act(async () => {
+      Object.defineProperty(input, 'files', {
+        value: [file],
+      })
+      fireEvent.change(input)
     })
 
-    fireEvent.change(input)
-
-    // Wait for the callback
-    await vi.waitFor(() => {
+    await waitFor(() => {
       expect(onUpload).toHaveBeenCalledWith(file)
     })
+  })
+
+  it('renders intensity selector', () => {
+    const onUpload = vi.fn()
+    render(<DropZone onUpload={onUpload} intensity="medium" onIntensityChange={vi.fn()} />)
+
+    expect(screen.getByText('Mild')).toBeInTheDocument()
+    expect(screen.getByText('Medium')).toBeInTheDocument()
+    expect(screen.getByText('Brutal')).toBeInTheDocument()
+  })
+
+  it('calls onIntensityChange when intensity is changed', async () => {
+    const onUpload = vi.fn()
+    const onIntensityChange = vi.fn()
+    render(
+      <DropZone
+        onUpload={onUpload}
+        intensity="medium"
+        onIntensityChange={onIntensityChange}
+      />
+    )
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Brutal'))
+    })
+
+    expect(onIntensityChange).toHaveBeenCalledWith('brutal')
+  })
+
+  it('renders industry selector', () => {
+    const onUpload = vi.fn()
+    render(
+      <DropZone
+        onUpload={onUpload}
+        industry="general"
+        onIndustryChange={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('General')).toBeInTheDocument()
+  })
+
+  it('calls onIndustryChange when industry is changed', async () => {
+    const onUpload = vi.fn()
+    const onIndustryChange = vi.fn()
+    render(
+      <DropZone
+        onUpload={onUpload}
+        industry="general"
+        onIndustryChange={onIndustryChange}
+      />
+    )
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Tech'))
+    })
+
+    expect(onIndustryChange).toHaveBeenCalledWith('tech')
   })
 })

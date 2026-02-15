@@ -3,46 +3,35 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 describe('API', () => {
   const mockRoastResponse = {
     id: 'roast_123',
+    share_id: 'share_123',
     score: 75,
-    roast: {
-      headline: 'Test headline',
-      sections: [],
-    },
+    score_breakdown: { clarity: 75, impact: 75, relevance: 75, ats: 75 },
+    headline: 'Test headline',
+    sections: [],
     suggestions: [],
     ats_tips: [],
-    share_url: 'https://example.com/r/123',
+    intensity: 'medium',
+    badges: [],
+    is_headline_public: false,
+    reactions: {},
   }
-
-  const mockUser = {
-    id: 'user_1',
-    email: 'test@example.com',
-    full_name: 'Test User',
-  }
-
-  const mockToken = { access_token: 'test-jwt-token' }
 
   let mockPost: ReturnType<typeof vi.fn>
   let mockGet: ReturnType<typeof vi.fn>
-  let mockDelete: ReturnType<typeof vi.fn>
-  let mockDefaults: { headers: { common: Record<string, string> } }
+  let mockPatch: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
     vi.resetModules()
     mockPost = vi.fn()
     mockGet = vi.fn()
-    mockDelete = vi.fn()
-    mockDefaults = { headers: { common: {} } }
-
-    // Clear localStorage
-    localStorage.clear()
+    mockPatch = vi.fn()
 
     vi.doMock('axios', () => ({
       default: {
         create: () => ({
           post: mockPost,
           get: mockGet,
-          delete: mockDelete,
-          defaults: mockDefaults,
+          patch: mockPatch,
         }),
       },
     }))
@@ -50,7 +39,6 @@ describe('API', () => {
 
   afterEach(() => {
     vi.doUnmock('axios')
-    localStorage.clear()
   })
 
   describe('uploadResume', () => {
@@ -83,6 +71,54 @@ describe('API', () => {
       expect(formData.get('file')).toBe(mockFile)
     })
 
+    it('includes intensity in FormData', async () => {
+      mockPost.mockResolvedValue({ data: mockRoastResponse })
+
+      const { uploadResume } = await import('../lib/api')
+      const mockFile = new File(['test'], 'resume.pdf', { type: 'application/pdf' })
+
+      await uploadResume(mockFile, 'brutal')
+
+      const formData = mockPost.mock.calls[0][1] as FormData
+      expect(formData.get('intensity')).toBe('brutal')
+    })
+
+    it('includes industry in FormData', async () => {
+      mockPost.mockResolvedValue({ data: mockRoastResponse })
+
+      const { uploadResume } = await import('../lib/api')
+      const mockFile = new File(['test'], 'resume.pdf', { type: 'application/pdf' })
+
+      await uploadResume(mockFile, 'medium', 'tech')
+
+      const formData = mockPost.mock.calls[0][1] as FormData
+      expect(formData.get('industry')).toBe('tech')
+    })
+
+    it('uses default intensity medium when not specified', async () => {
+      mockPost.mockResolvedValue({ data: mockRoastResponse })
+
+      const { uploadResume } = await import('../lib/api')
+      const mockFile = new File(['test'], 'resume.pdf', { type: 'application/pdf' })
+
+      await uploadResume(mockFile)
+
+      const formData = mockPost.mock.calls[0][1] as FormData
+      expect(formData.get('intensity')).toBe('medium')
+    })
+
+    it('uses default industry general when not specified', async () => {
+      mockPost.mockResolvedValue({ data: mockRoastResponse })
+
+      const { uploadResume } = await import('../lib/api')
+      const mockFile = new File(['test'], 'resume.pdf', { type: 'application/pdf' })
+
+      await uploadResume(mockFile)
+
+      const formData = mockPost.mock.calls[0][1] as FormData
+      expect(formData.get('industry')).toBe('general')
+    })
+
     it('returns roast response data', async () => {
       mockPost.mockResolvedValue({ data: mockRoastResponse })
 
@@ -109,16 +145,16 @@ describe('API', () => {
       mockGet.mockResolvedValue({ data: mockRoastResponse })
 
       const { getRoast } = await import('../lib/api')
-      await getRoast('roast_123')
+      await getRoast('share_123')
 
-      expect(mockGet).toHaveBeenCalledWith('/api/v1/roast/roast_123')
+      expect(mockGet).toHaveBeenCalledWith('/api/v1/roast/share_123')
     })
 
     it('returns roast response data', async () => {
       mockGet.mockResolvedValue({ data: mockRoastResponse })
 
       const { getRoast } = await import('../lib/api')
-      const result = await getRoast('roast_123')
+      const result = await getRoast('share_123')
 
       expect(result).toEqual(mockRoastResponse)
     })
@@ -132,214 +168,121 @@ describe('API', () => {
     })
   })
 
-  describe('signup', () => {
-    it('sends POST request to /api/v1/auth/signup', async () => {
-      mockPost.mockResolvedValue({ data: mockUser })
+  describe('getHotTakes', () => {
+    it('sends GET request to /api/v1/hot-takes', async () => {
+      mockGet.mockResolvedValue({ data: { hot_takes: [] } })
 
-      const { signup } = await import('../lib/api')
-      await signup({
-        email: 'test@example.com',
-        password: 'password123',
-        full_name: 'Test User',
-      })
+      const { getHotTakes } = await import('../lib/api')
+      await getHotTakes()
 
-      expect(mockPost).toHaveBeenCalledWith('/api/v1/auth/signup', {
-        email: 'test@example.com',
-        password: 'password123',
-        full_name: 'Test User',
-      })
+      expect(mockGet).toHaveBeenCalledWith('/api/v1/hot-takes', { params: { limit: 10 } })
     })
 
-    it('returns user data', async () => {
-      mockPost.mockResolvedValue({ data: mockUser })
+    it('accepts custom limit', async () => {
+      mockGet.mockResolvedValue({ data: { hot_takes: [] } })
 
-      const { signup } = await import('../lib/api')
-      const result = await signup({
-        email: 'test@example.com',
-        password: 'password123',
-        full_name: 'Test User',
-      })
+      const { getHotTakes } = await import('../lib/api')
+      await getHotTakes(5)
 
-      expect(result).toEqual(mockUser)
+      expect(mockGet).toHaveBeenCalledWith('/api/v1/hot-takes', { params: { limit: 5 } })
+    })
+
+    it('returns hot takes response', async () => {
+      const mockHotTakes = { hot_takes: [{ headline: 'Test', score: 75 }] }
+      mockGet.mockResolvedValue({ data: mockHotTakes })
+
+      const { getHotTakes } = await import('../lib/api')
+      const result = await getHotTakes()
+
+      expect(result).toEqual(mockHotTakes)
     })
   })
 
-  describe('login', () => {
-    it('sends POST request to /api/v1/auth/login', async () => {
-      mockPost.mockResolvedValue({ data: mockToken })
+  describe('togglePublicHeadline', () => {
+    it('sends PATCH request to toggle headline public to true', async () => {
+      mockPatch.mockResolvedValue({})
 
-      const { login } = await import('../lib/api')
-      await login({
-        email: 'test@example.com',
-        password: 'password123',
-      })
+      const { togglePublicHeadline } = await import('../lib/api')
+      await togglePublicHeadline('share_123', true)
 
-      expect(mockPost).toHaveBeenCalledWith('/api/v1/auth/login', {
-        email: 'test@example.com',
-        password: 'password123',
-      })
+      expect(mockPatch).toHaveBeenCalledWith(
+        '/api/v1/roast/share_123/public',
+        null,
+        { params: { is_public: true } }
+      )
     })
 
-    it('returns token response', async () => {
-      mockPost.mockResolvedValue({ data: mockToken })
+    it('sends PATCH request to toggle headline public to false', async () => {
+      mockPatch.mockResolvedValue({})
 
-      const { login } = await import('../lib/api')
-      const result = await login({
-        email: 'test@example.com',
-        password: 'password123',
-      })
+      const { togglePublicHeadline } = await import('../lib/api')
+      await togglePublicHeadline('share_123', false)
 
-      expect(result).toEqual(mockToken)
-    })
-  })
-
-  describe('getCurrentUser', () => {
-    it('sends GET request to /api/v1/auth/me', async () => {
-      mockGet.mockResolvedValue({ data: mockUser })
-
-      const { getCurrentUser } = await import('../lib/api')
-      await getCurrentUser()
-
-      expect(mockGet).toHaveBeenCalledWith('/api/v1/auth/me')
+      expect(mockPatch).toHaveBeenCalledWith(
+        '/api/v1/roast/share_123/public',
+        null,
+        { params: { is_public: false } }
+      )
     })
 
-    it('returns user data', async () => {
-      mockGet.mockResolvedValue({ data: mockUser })
+    it('propagates error on API failure', async () => {
+      mockPatch.mockRejectedValue(new Error('Unauthorized'))
 
-      const { getCurrentUser } = await import('../lib/api')
-      const result = await getCurrentUser()
+      const { togglePublicHeadline } = await import('../lib/api')
 
-      expect(result).toEqual(mockUser)
+      await expect(togglePublicHeadline('share_123', true)).rejects.toThrow('Unauthorized')
     })
   })
 
-  describe('listResumes', () => {
-    it('sends GET request to /api/v1/resumes', async () => {
-      mockGet.mockResolvedValue({ data: { resumes: [], total: 0 } })
+  describe('addReaction', () => {
+    it('sends POST request to correct endpoint', async () => {
+      mockPost.mockResolvedValue({ data: { reactions: { fire: 1 } } })
 
-      const { listResumes } = await import('../lib/api')
-      await listResumes()
+      const { addReaction } = await import('../lib/api')
+      await addReaction('share_123', 'fire')
 
-      expect(mockGet).toHaveBeenCalledWith('/api/v1/resumes')
-    })
-
-    it('returns resume list', async () => {
-      const mockResumes = {
-        resumes: [{ id: '1', filename: 'resume.pdf', version: 1 }],
-        total: 1,
-      }
-      mockGet.mockResolvedValue({ data: mockResumes })
-
-      const { listResumes } = await import('../lib/api')
-      const result = await listResumes()
-
-      expect(result).toEqual(mockResumes)
-    })
-  })
-
-  describe('getResume', () => {
-    it('sends GET request to correct endpoint', async () => {
-      mockGet.mockResolvedValue({ data: { id: '1', filename: 'resume.pdf' } })
-
-      const { getResume } = await import('../lib/api')
-      await getResume('resume_1')
-
-      expect(mockGet).toHaveBeenCalledWith('/api/v1/resumes/resume_1')
-    })
-  })
-
-  describe('downloadResume', () => {
-    it('sends GET request with blob response type', async () => {
-      const mockBlob = new Blob(['pdf content'])
-      mockGet.mockResolvedValue({ data: mockBlob })
-
-      const { downloadResume } = await import('../lib/api')
-      await downloadResume('resume_1')
-
-      expect(mockGet).toHaveBeenCalledWith('/api/v1/resumes/resume_1/download', {
-        responseType: 'blob',
+      expect(mockPost).toHaveBeenCalledWith('/api/v1/roast/share_123/react', {
+        reaction: 'fire',
       })
     })
 
-    it('returns blob data', async () => {
-      const mockBlob = new Blob(['pdf content'])
-      mockGet.mockResolvedValue({ data: mockBlob })
+    it('returns reactions response', async () => {
+      const mockReactions = { reactions: { fire: 5, ouch: 3 } }
+      mockPost.mockResolvedValue({ data: mockReactions })
 
-      const { downloadResume } = await import('../lib/api')
-      const result = await downloadResume('resume_1')
+      const { addReaction } = await import('../lib/api')
+      const result = await addReaction('share_123', 'fire')
 
-      expect(result).toEqual(mockBlob)
+      expect(result).toEqual(mockReactions)
+    })
+
+    it('handles different reaction types', async () => {
+      mockPost.mockResolvedValue({ data: { reactions: { ouch: 1 } } })
+
+      const { addReaction } = await import('../lib/api')
+      await addReaction('share_123', 'ouch')
+
+      expect(mockPost).toHaveBeenCalledWith('/api/v1/roast/share_123/react', {
+        reaction: 'ouch',
+      })
     })
   })
 
-  describe('deleteResume', () => {
-    it('sends DELETE request to correct endpoint', async () => {
-      mockDelete.mockResolvedValue({})
+  describe('getOgImageUrl', () => {
+    it('returns correct URL', async () => {
+      const { getOgImageUrl } = await import('../lib/api')
+      const result = getOgImageUrl('share_123')
 
-      const { deleteResume } = await import('../lib/api')
-      await deleteResume('resume_1')
-
-      expect(mockDelete).toHaveBeenCalledWith('/api/v1/resumes/resume_1')
-    })
-  })
-
-  describe('getMyRoasts', () => {
-    it('sends GET request to /api/v1/my-roasts', async () => {
-      mockGet.mockResolvedValue({ data: { roasts: [], total: 0 } })
-
-      const { getMyRoasts } = await import('../lib/api')
-      await getMyRoasts()
-
-      expect(mockGet).toHaveBeenCalledWith('/api/v1/my-roasts')
+      expect(result).toContain('/api/v1/roast/share_123/og-image')
     })
 
-    it('returns roast history', async () => {
-      const mockRoasts = {
-        roasts: [{ id: '1', score: 75, headline: 'Test' }],
-        total: 1,
-      }
-      mockGet.mockResolvedValue({ data: mockRoasts })
+    it('handles different share IDs', async () => {
+      const { getOgImageUrl } = await import('../lib/api')
+      const result1 = getOgImageUrl('abc123')
+      const result2 = getOgImageUrl('xyz789')
 
-      const { getMyRoasts } = await import('../lib/api')
-      const result = await getMyRoasts()
-
-      expect(result).toEqual(mockRoasts)
-    })
-  })
-
-  describe('setAuthToken', () => {
-    it('sets token in localStorage when provided', async () => {
-      const { setAuthToken } = await import('../lib/api')
-      setAuthToken('test-token')
-
-      expect(localStorage.getItem('token')).toBe('test-token')
-    })
-
-    it('removes token from localStorage when null', async () => {
-      localStorage.setItem('token', 'old-token')
-
-      const { setAuthToken } = await import('../lib/api')
-      setAuthToken(null)
-
-      expect(localStorage.getItem('token')).toBeNull()
-    })
-  })
-
-  describe('getStoredToken', () => {
-    it('returns token from localStorage', async () => {
-      localStorage.setItem('token', 'stored-token')
-
-      const { getStoredToken } = await import('../lib/api')
-      const result = getStoredToken()
-
-      expect(result).toBe('stored-token')
-    })
-
-    it('returns null when no token stored', async () => {
-      const { getStoredToken } = await import('../lib/api')
-      const result = getStoredToken()
-
-      expect(result).toBeNull()
+      expect(result1).toContain('abc123')
+      expect(result2).toContain('xyz789')
     })
   })
 })

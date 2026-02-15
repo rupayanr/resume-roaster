@@ -52,7 +52,8 @@ describe('RoastCard', () => {
   it('renders headline', () => {
     render(<RoastCard roast={mockRoast} />)
 
-    expect(screen.getByText('Your resume shows promise but needs polish.')).toBeInTheDocument()
+    // Headline is rendered with surrounding quotes in the component
+    expect(screen.getByText(/Your resume shows promise but needs polish/)).toBeInTheDocument()
   })
 
   it('renders feedback sections', () => {

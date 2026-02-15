@@ -176,41 +176,58 @@ describe('Suggestions', () => {
 })
 
 describe('ShareButton', () => {
-  it('displays "Copy Link" text initially', () => {
+  it('displays "Share" text initially', () => {
     render(<ShareButton shareUrl="https://example.com/share" />)
 
-    expect(screen.getByText('Copy Link')).toBeInTheDocument()
+    expect(screen.getByText('Share')).toBeInTheDocument()
   })
 
-  it('shows "Copied!" after clicking (verifies clipboard interaction)', async () => {
+  it('shows dropdown with "Copy Link" when clicked', async () => {
     const user = userEvent.setup()
     render(<ShareButton shareUrl="https://example.com/share" />)
 
-    await user.click(screen.getByRole('button'))
+    // Click to open dropdown
+    await user.click(screen.getByText('Share'))
 
-    // The component changes state to "Copied!" which proves clipboard.writeText was called successfully
+    // Dropdown should show Copy Link option
+    await waitFor(() => {
+      expect(screen.getByText('Copy Link')).toBeInTheDocument()
+    })
+  })
+
+  it('shows "Copied!" after clicking Copy Link', async () => {
+    const user = userEvent.setup()
+    render(<ShareButton shareUrl="https://example.com/share" />)
+
+    // Open dropdown
+    await user.click(screen.getByText('Share'))
+
+    // Click Copy Link
+    await waitFor(() => {
+      expect(screen.getByText('Copy Link')).toBeInTheDocument()
+    })
+    await user.click(screen.getByText('Copy Link'))
+
+    // Dropdown closes after copying, reopen to see "Copied!" state
+    await user.click(screen.getByText('Share'))
+
+    // The component shows "Copied!" which proves clipboard.writeText was called successfully
     await waitFor(() => {
       expect(screen.getByText('Copied!')).toBeInTheDocument()
     })
   })
 
-  it('renders copy icon initially', () => {
-    render(<ShareButton shareUrl="https://example.com/share" />)
-
-    // Check for the button with copy text
-    const button = screen.getByRole('button')
-    expect(button).toHaveTextContent('Copy Link')
-  })
-
-  it('renders checkmark icon after clicking', async () => {
+  it('shows share options in dropdown', async () => {
     const user = userEvent.setup()
     render(<ShareButton shareUrl="https://example.com/share" />)
 
-    await user.click(screen.getByRole('button'))
+    // Click to open dropdown
+    await user.click(screen.getByText('Share'))
 
+    // Check for social share options
     await waitFor(() => {
-      const button = screen.getByRole('button')
-      expect(button).toHaveTextContent('Copied!')
+      expect(screen.getByText('Share on X')).toBeInTheDocument()
+      expect(screen.getByText('Share on LinkedIn')).toBeInTheDocument()
     })
   })
 })
