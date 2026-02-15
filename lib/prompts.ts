@@ -112,70 +112,71 @@ SCORING CRITERIA (score each 0-100, then average for final score):
 
 You MUST respond with ONLY valid JSON in this EXACT structure:
 {
-  "score": 72,
+  "score": <number 0-100>,
   "score_breakdown": {
-    "clarity": 75,
-    "impact": 68,
-    "relevance": 80,
-    "ats": 65
+    "clarity": <number 0-100>,
+    "impact": <number 0-100>,
+    "relevance": <number 0-100>,
+    "ats": <number 0-100>
   },
-  "headline": "A witty, memorable one-liner roast specific to THIS resume",
+  "headline": "<your witty one-liner roast>",
   "sections": [
     {
       "title": "The Good",
       "icon": "check",
-      "points": [
-        "Specific strength with quote: 'actual text from resume'",
-        "Another strength citing specific content"
-      ]
+      "points": ["<strength 1>", "<strength 2>", "<strength 3>"]
     },
     {
       "title": "The Bad",
       "icon": "alert",
-      "points": [
-        "Specific weakness - quote the problematic text: 'actual text'",
-        "Another issue with the specific section or phrase"
-      ]
+      "points": ["<weakness 1>", "<weakness 2>", "<weakness 3>"]
     },
     {
       "title": "The Fixable",
       "icon": "edit",
-      "points": [
-        "Actionable fix for a specific issue",
-        "Another concrete improvement to make"
-      ]
+      "points": ["<fix 1>", "<fix 2>", "<fix 3>"]
     }
   ],
   "suggestions": [
     {
-      "original": "EXACT text copied from the resume that needs improvement",
-      "improved": "The rewritten version with metrics, action verbs, and impact",
-      "why": "Brief explanation of what makes this better"
-    },
-    {
-      "original": "Another EXACT phrase from the resume",
-      "improved": "Professional rewrite with quantified achievements",
-      "why": "Why this change strengthens the resume"
-    },
-    {
-      "original": "A third EXACT phrase needing work",
-      "improved": "Stronger version with specific results",
-      "why": "The improvement rationale"
+      "original": "<exact quote from resume>",
+      "improved": "<your rewritten version>",
+      "why": "<brief explanation>"
     }
   ],
-  "ats_tips": [
-    "Specific ATS tip based on this resume's content",
-    "Another actionable ATS recommendation"
-  ]
+  "ats_tips": ["<tip 1>", "<tip 2>"]
 }
 
+WRITING QUALITY GUIDELINES - FOLLOW THESE CAREFULLY:
+
+For "The Good" section, write like:
+- "Strong use of metrics in your Amazon role - '40% increase in conversion' gives concrete proof of impact"
+- "Clean chronological structure makes your 8-year career progression easy to follow"
+- "The technical skills section is well-organized and relevant to SWE roles"
+
+For "The Bad" section, write like:
+- "Your summary reads like a LinkedIn auto-generator: 'passionate professional seeking opportunities' tells us nothing"
+- "The gap between 2019-2021 is an elephant in the room - address it or recruiters will assume the worst"
+- "Five bullet points start with 'Responsible for...' - that's job description copy-paste, not achievement showcasing"
+
+For "The Fixable" section, write like:
+- "Replace 'Worked on various projects' with specific project names and your role"
+- "Add metrics to your Google role - you must have data on user impact, system performance, or team output"
+- "Cut the 'References available upon request' - it's 2024, everyone knows that"
+
+For "suggestions", find REAL text from the resume:
+- original: "Responsible for managing team projects and deliverables"
+- improved: "Led 5-person team delivering $2M revenue product, shipping 3 major features ahead of schedule"
+- why: "Quantifies team size, business impact, and demonstrates exceeding expectations"
+
 IMPORTANT RULES:
-- "original" in suggestions MUST be exact quotes from the resume text below
-- Provide at least 3 before/after suggestions using real content
-- Be specific - reference actual job titles, skills, or experiences mentioned
-- "points" and "ats_tips" must be arrays of strings
-- "score" should be the average of the 4 score_breakdown values
-- The headline MUST be witty, specific, and memorable - not generic!
+1. Every point MUST reference specific content from THIS resume - job titles, company names, skills, or exact phrases
+2. NEVER use placeholder text like "specific strength" or "actual text from resume" - write real feedback
+3. "original" in suggestions MUST be EXACT quotes copy-pasted from the resume below
+4. Provide 3-5 before/after suggestions using REAL content from the resume
+5. Each "points" array should have 3-5 specific, substantive observations
+6. "score" should roughly equal the average of the 4 score_breakdown values
+7. The headline MUST reference something specific from THIS resume - a company name, skill, or issue
 
 RESUME TEXT TO ANALYZE:
 ${resumeText}
