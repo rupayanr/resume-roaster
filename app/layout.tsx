@@ -5,6 +5,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://resumeroaster.rupayan.dev'),
   title: 'Resume Roaster - Get Your Resume Roasted',
   description: 'Upload your resume and get brutally honest AI feedback with actionable suggestions. Fun, useful, and free.',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   openGraph: {
     title: 'Resume Roaster',
     description: 'Get your resume roasted by AI. Brutally honest feedback with actionable suggestions.',
