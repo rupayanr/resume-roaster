@@ -18,9 +18,3 @@ export const VALID_REACTIONS = new Set(['fire', 'crying_laughing', 'ouch', 'fact
 
 export const MAX_FILE_SIZE_MB = 5
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
-
-export function generateContentHash(content: string, intensity: string, industry: string): string {
-  // Hash the content + settings to ensure same doc with same settings = same result
-  const data = `${content}|${intensity}|${industry}`
-  return crypto.createHash('sha256').update(data).digest('hex')
-}
