@@ -11,6 +11,7 @@ model Roast {
   id        String   @id @default(cuid())
   shareId   String   @unique @map("share_id")
   createdAt DateTime @default(now()) @map("created_at")
+  contentHash String? @map("content_hash")
 
   score          Int
   scoreBreakdown Json    @map("score_breakdown")

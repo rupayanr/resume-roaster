@@ -2,17 +2,19 @@
 
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, RotateCcw, Flame } from 'lucide-react'
+import { RotateCcw, Flame } from 'lucide-react'
 import { Navbar } from './components/Layout/Navbar'
 import { DropZone } from './components/Upload/DropZone'
 import { RoastCard } from './components/Roast/RoastCard'
 import { ShareButton } from './components/Share/ShareButton'
 import { HotTakesCarousel } from './components/HotTakes/HotTakesCarousel'
+import { ProcessingStepper, type ProcessingStep } from './components/Processing/ProcessingStepper'
 import type { RoastResponse, RoastIntensity, Industry } from '@/types'
 
 export default function HomePage() {
   const [roast, setRoast] = useState<RoastResponse | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [processingStep, setProcessingStep] = useState<ProcessingStep>('uploading')
   const [error, setError] = useState<string | null>(null)
   const [intensity, setIntensity] = useState<RoastIntensity>('medium')
   const [industry, setIndustry] = useState<Industry>('general')
@@ -20,12 +22,22 @@ export default function HomePage() {
   const submitResume = useCallback(async (file: File) => {
     setIsLoading(true)
     setError(null)
+    setProcessingStep('uploading')
 
     try {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('intensity', intensity)
       formData.append('industry', industry)
+
+      // Simulate step progression
+      setProcessingStep('parsing')
+      await new Promise(r => setTimeout(r, 500))
+
+      setProcessingStep('analyzing')
+      await new Promise(r => setTimeout(r, 500))
+
+      setProcessingStep('generating')
 
       const response = await fetch('/api/roast', {
         method: 'POST',
@@ -36,6 +48,9 @@ export default function HomePage() {
         const data = await response.json()
         throw new Error(data.detail || 'Failed to roast resume')
       }
+
+      setProcessingStep('complete')
+      await new Promise(r => setTimeout(r, 300))
 
       const data = await response.json()
       setRoast(data)
@@ -92,17 +107,8 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center"
             >
-              <div className="flex flex-col items-center">
-                <Loader2 className="w-12 h-12 text-orange-500 animate-spin mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Roasting your resume...
-                </h3>
-                <p className="text-sm text-gray-500">
-                  This may take a moment. We&apos;re analyzing every detail.
-                </p>
-              </div>
+              <ProcessingStepper currentStep={processingStep} />
             </motion.div>
           ) : error ? (
             <motion.div

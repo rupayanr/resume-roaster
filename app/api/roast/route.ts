@@ -5,6 +5,7 @@ import { detectBadges } from '@/lib/badges'
 import { extractTextFromPdf, validatePdfMagicBytes } from '@/lib/pdf'
 import {
   generateShareId,
+  generateContentHash,
   VALID_INTENSITIES,
   VALID_INDUSTRIES,
   MAX_FILE_SIZE_BYTES,
@@ -88,6 +89,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check for existing roast with same content
+    const contentHash = generateContentHash(resumeText, intensity, industry)
+    const existingRoast = await prisma.roast.findFirst({
+      where: { contentHash },
+      orderBy: { createdAt: 'desc' },
+    })
+
+    if (existingRoast) {
+      return NextResponse.json({
+        id: existingRoast.id,
+        share_id: existingRoast.shareId,
+        score: existingRoast.score,
+        score_breakdown: existingRoast.scoreBreakdown,
+        headline: existingRoast.headline,
+        sections: existingRoast.sections,
+        suggestions: existingRoast.suggestions,
+        ats_tips: existingRoast.atsTips,
+        created_at: existingRoast.createdAt.toISOString(),
+        intensity: existingRoast.intensity,
+        industry: existingRoast.industry,
+        badges: existingRoast.badges,
+        is_headline_public: existingRoast.isHeadlinePublic,
+        reactions: existingRoast.reactions,
+        cached: true,
+      })
+    }
+
     // Generate roast
     let roastData
     try {
@@ -109,6 +137,7 @@ export async function POST(request: NextRequest) {
     const roast = await prisma.roast.create({
       data: {
         shareId: generateShareId(),
+        contentHash,
         score,
         scoreBreakdown: roastData.score_breakdown || {
           clarity: 0,
