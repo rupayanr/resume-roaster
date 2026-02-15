@@ -140,7 +140,7 @@ export function FlameOverlay({ children, intensity }: FlameOverlayProps) {
       )}
 
       {/* Content */}
-      <div className="relative z-0">
+      <div className="relative z-20">
         {children}
       </div>
     </div>
