@@ -8,11 +8,11 @@ interface RoastThermometerProps {
 }
 
 const HEAT_LEVELS = [
-  { min: 0, max: 20, label: 'ABSOLUTELY COOKED', color: 'from-red-600 to-red-500', textColor: 'text-red-500', bgColor: 'bg-red-500', icon: Flame },
-  { min: 21, max: 40, label: 'Extra Crispy', color: 'from-orange-500 to-orange-400', textColor: 'text-orange-500', bgColor: 'bg-orange-500', icon: Flame },
-  { min: 41, max: 60, label: 'Medium Well', color: 'from-amber-500 to-amber-400', textColor: 'text-amber-500', bgColor: 'bg-amber-500', icon: Thermometer },
-  { min: 61, max: 80, label: 'Lightly Toasted', color: 'from-yellow-500 to-yellow-400', textColor: 'text-yellow-500', bgColor: 'bg-yellow-500', icon: Sun },
-  { min: 81, max: 100, label: 'Barely Warm', color: 'from-green-500 to-green-400', textColor: 'text-green-500', bgColor: 'bg-green-500', icon: Snowflake },
+  { min: 0, max: 20, label: 'Ice Cold', color: 'from-cyan-500 to-blue-400', textColor: 'text-cyan-600', bgColor: 'bg-cyan-500', icon: Snowflake },
+  { min: 21, max: 40, label: 'Barely Warm', color: 'from-green-500 to-green-400', textColor: 'text-green-600', bgColor: 'bg-green-500', icon: Sun },
+  { min: 41, max: 60, label: 'Getting Toasty', color: 'from-yellow-500 to-amber-400', textColor: 'text-amber-600', bgColor: 'bg-amber-500', icon: Thermometer },
+  { min: 61, max: 80, label: 'Extra Crispy', color: 'from-orange-500 to-orange-400', textColor: 'text-orange-600', bgColor: 'bg-orange-500', icon: Flame },
+  { min: 81, max: 100, label: 'ABSOLUTELY COOKED', color: 'from-red-600 to-red-500', textColor: 'text-red-600', bgColor: 'bg-red-500', icon: Flame },
 ]
 
 function getHeatLevel(score: number) {
