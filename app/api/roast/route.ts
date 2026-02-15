@@ -94,8 +94,9 @@ export async function POST(request: NextRequest) {
       roastData = await generateRoast(resumeText, intensity, industry)
     } catch (error) {
       console.error('Roast generation error:', error)
+      const message = error instanceof Error ? error.message : 'Unknown error'
       return NextResponse.json(
-        { detail: 'Failed to generate roast' },
+        { detail: `Failed to generate roast: ${message}` },
         { status: 500 }
       )
     }
