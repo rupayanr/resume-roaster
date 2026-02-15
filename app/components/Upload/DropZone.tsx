@@ -2,7 +2,8 @@
 
 import { useDropzone } from 'react-dropzone'
 import { motion } from 'framer-motion'
-import { Upload, FileText, Flame, Thermometer, Snowflake, Briefcase, Code, DollarSign, Palette, Heart } from 'lucide-react'
+import { Upload, FileText, Briefcase, Code, DollarSign, Palette, Heart } from 'lucide-react'
+import { IntensityDial } from './IntensityDial'
 import type { RoastIntensity, Industry } from '@/types'
 
 interface DropZoneProps {
@@ -13,12 +14,6 @@ interface DropZoneProps {
   onIntensityChange: (intensity: RoastIntensity) => void
   onIndustryChange: (industry: Industry) => void
 }
-
-const INTENSITY_OPTIONS: { value: RoastIntensity; label: string; icon: React.ComponentType<{ className?: string }>; description: string }[] = [
-  { value: 'mild', label: 'Mild', icon: Snowflake, description: 'Encouraging & supportive' },
-  { value: 'medium', label: 'Medium', icon: Thermometer, description: 'Witty & balanced' },
-  { value: 'brutal', label: 'Brutal', icon: Flame, description: 'No mercy' },
-]
 
 const INDUSTRY_OPTIONS: { value: Industry; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { value: 'general', label: 'General', icon: Briefcase },
@@ -49,67 +44,12 @@ export function DropZone({
 
   return (
     <div className="space-y-6">
-      {/* Intensity Selector */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Roast Intensity
-        </label>
-        <div className="grid grid-cols-3 gap-3">
-          {INTENSITY_OPTIONS.map(({ value, label, icon: Icon, description }) => (
-            <motion.button
-              key={value}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => onIntensityChange(value)}
-              disabled={disabled}
-              className={`
-                relative p-4 rounded-xl border-2 transition-all duration-200
-                ${intensity === value
-                  ? value === 'mild'
-                    ? 'border-blue-500 bg-blue-50'
-                    : value === 'medium'
-                    ? 'border-amber-500 bg-amber-50'
-                    : 'border-red-500 bg-red-50'
-                  : 'border-gray-200 bg-white hover:border-gray-300'
-                }
-                ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-              `}
-            >
-              <div className="flex flex-col items-center text-center">
-                <Icon className={`
-                  w-6 h-6 mb-2
-                  ${intensity === value
-                    ? value === 'mild'
-                      ? 'text-blue-600'
-                      : value === 'medium'
-                      ? 'text-amber-600'
-                      : 'text-red-600'
-                    : 'text-gray-400'
-                  }
-                `} />
-                <span className={`
-                  font-semibold text-sm
-                  ${intensity === value ? 'text-gray-900' : 'text-gray-600'}
-                `}>
-                  {label}
-                </span>
-                <span className="text-xs text-gray-500 mt-1">
-                  {description}
-                </span>
-              </div>
-              {intensity === value && (
-                <motion.div
-                  layoutId="intensity-indicator"
-                  className={`
-                    absolute inset-0 rounded-xl border-2
-                    ${value === 'mild' ? 'border-blue-500' : value === 'medium' ? 'border-amber-500' : 'border-red-500'}
-                  `}
-                />
-              )}
-            </motion.button>
-          ))}
-        </div>
-      </div>
+      {/* Intensity Dial */}
+      <IntensityDial
+        value={intensity}
+        onChange={onIntensityChange}
+        disabled={disabled}
+      />
 
       {/* Industry Selector */}
       <div>
@@ -149,7 +89,7 @@ export function DropZone({
           {...getRootProps()}
           className={`
             relative overflow-hidden
-            border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer
+            border-2 border-dashed rounded-2xl p-6 sm:p-12 text-center cursor-pointer
             transition-all duration-300 ease-out
             ${isDragActive
               ? 'border-blue-500 bg-blue-50'

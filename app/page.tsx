@@ -87,10 +87,10 @@ export default function HomePage() {
             <Flame className="w-4 h-4" />
             Get roasted by AI
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
             Resume Roaster
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
             Upload your resume and get brutally honest feedback with actionable suggestions.
             No sugarcoating, just the truth.
           </p>
@@ -165,7 +165,7 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8"
+              className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-8"
             >
               <DropZone
                 onUpload={submitResume}

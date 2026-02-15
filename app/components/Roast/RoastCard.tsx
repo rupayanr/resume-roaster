@@ -69,7 +69,7 @@ export function RoastCard({ roast }: RoastCardProps) {
             </motion.div>
 
             {/* Score and Thermometer row */}
-            <div className="flex items-center justify-center gap-8">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8">
               <ScoreDisplay score={roast.score} />
               <RoastThermometer score={roast.score} />
             </div>
@@ -108,7 +108,7 @@ export function RoastCard({ roast }: RoastCardProps) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="mt-6 grid grid-cols-4 gap-3"
+                className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3"
               >
                 {[
                   { key: 'clarity', label: 'Clarity', color: 'bg-blue-500' },
