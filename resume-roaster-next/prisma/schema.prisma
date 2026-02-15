@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Roast {
+  id        String   @id @default(cuid())
+  shareId   String   @unique @map("share_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  score          Int
+  scoreBreakdown Json    @map("score_breakdown")
+  headline       String
+  sections       Json
+  suggestions    Json
+  atsTips        Json    @map("ats_tips")
+
+  intensity String  @default("medium")
+  industry  String?
+  badges    Json    @default("[]")
+
+  isHeadlinePublic Boolean @default(false) @map("is_headline_public")
+  reactions        Json    @default("{}")
+
+  @@map("roasts")
+}
