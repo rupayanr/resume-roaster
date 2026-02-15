@@ -39,7 +39,7 @@ export async function generateRoast(
   // Adjust temperature based on intensity for more creative brutal roasts
   const temperature = intensity === 'mild' ? 0.1 : intensity === 'medium' ? 0.2 : 0.3
 
-  const model = process.env.GROQ_MODEL || 'llama-3.1-70b-versatile'
+  const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile'
 
   const response = await client.chat.completions.create({
     model,
