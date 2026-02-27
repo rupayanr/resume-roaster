@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Eye, Target, Sparkles, FileSearch, Info } from 'lucide-react'
 import type { ScoreBreakdown } from '@/types'
@@ -107,6 +108,16 @@ const colorClasses = {
 }
 
 export function ScoreBreakdownModal({ isOpen, onClose, breakdown, totalScore }: ScoreBreakdownModalProps) {
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -148,7 +159,7 @@ export function ScoreBreakdownModal({ isOpen, onClose, breakdown, totalScore }: 
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+            <div className="flex-1 overflow-y-auto overscroll-contain p-5 space-y-4">
               {/* Overall Score */}
               <div className="text-center p-4 bg-gray-50 rounded-xl">
                 <p className="text-sm text-gray-600 mb-1">Overall Score</p>
