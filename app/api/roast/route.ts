@@ -7,6 +7,7 @@ import {
   generateShareId,
   VALID_INTENSITIES,
   VALID_INDUSTRIES,
+  VALID_PERSONAS,
   MAX_FILE_SIZE_BYTES,
   MAX_FILE_SIZE_MB,
 } from '@/lib/utils'
@@ -17,6 +18,7 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File | null
     const intensity = (formData.get('intensity') as string) || 'medium'
     const industry = (formData.get('industry') as string) || 'general'
+    const persona = (formData.get('persona') as string) || 'default'
 
     // Validate file exists
     if (!file) {
@@ -46,6 +48,14 @@ export async function POST(request: NextRequest) {
     if (!VALID_INDUSTRIES.has(industry)) {
       return NextResponse.json(
         { detail: `Invalid industry. Must be one of: ${Array.from(VALID_INDUSTRIES).join(', ')}` },
+        { status: 400 }
+      )
+    }
+
+    // Validate persona
+    if (!VALID_PERSONAS.has(persona)) {
+      return NextResponse.json(
+        { detail: `Invalid persona. Must be one of: ${Array.from(VALID_PERSONAS).join(', ')}` },
         { status: 400 }
       )
     }
@@ -91,7 +101,7 @@ export async function POST(request: NextRequest) {
     // Generate roast
     let roastData
     try {
-      roastData = await generateRoast(resumeText, intensity, industry)
+      roastData = await generateRoast(resumeText, intensity, industry, persona)
     } catch (error) {
       console.error('Roast generation error:', error)
       const message = error instanceof Error ? error.message : 'Unknown error'
@@ -122,6 +132,7 @@ export async function POST(request: NextRequest) {
         atsTips: roastData.ats_tips || [],
         intensity,
         industry: industry !== 'general' ? industry : null,
+        persona: persona !== 'default' ? persona : null,
         badges: badges as unknown as object[],
         isHeadlinePublic: false,
         reactions: {},
@@ -140,6 +151,7 @@ export async function POST(request: NextRequest) {
       created_at: roast.createdAt.toISOString(),
       intensity: roast.intensity,
       industry: roast.industry,
+      persona: roast.persona,
       badges: roast.badges,
       is_headline_public: roast.isHeadlinePublic,
       reactions: roast.reactions,

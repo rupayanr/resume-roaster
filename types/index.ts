@@ -36,6 +36,7 @@ export interface RoastResponse {
   created_at: string;
   intensity: RoastIntensity;
   industry?: string;
+  persona?: RoastPersona;
   badges: Badge[];
   is_headline_public: boolean;
   reactions: Record<string, number>;
@@ -44,6 +45,13 @@ export interface RoastResponse {
 export type RoastIntensity = 'mild' | 'medium' | 'brutal';
 export type Industry = 'tech' | 'finance' | 'creative' | 'healthcare' | 'general';
 export type ReactionType = 'fire' | 'crying_laughing' | 'ouch' | 'facts' | 'survived';
+export type RoastPersona =
+  | 'default'
+  | 'gordon_ramsay'
+  | 'supportive_mom'
+  | 'silicon_valley_vc'
+  | 'gen_z_intern'
+  | 'shakespeare';
 
 export interface UploadState {
   file: File | null;
@@ -54,6 +62,7 @@ export interface UploadState {
 export interface RoastOptions {
   intensity: RoastIntensity;
   industry: Industry;
+  persona: RoastPersona;
 }
 
 // Hot takes
@@ -74,4 +83,13 @@ export interface ReactionResponse {
 // API Response types
 export interface ApiError {
   detail: string;
+}
+
+// Roast History (localStorage)
+export interface RoastHistoryEntry {
+  date: string;
+  score: number;
+  shareId: string;
+  headline: string;
+  persona?: RoastPersona;
 }

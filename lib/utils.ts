@@ -14,6 +14,7 @@ export function validateShareId(shareId: string): boolean {
 
 export const VALID_INTENSITIES = new Set(['mild', 'medium', 'brutal'])
 export const VALID_INDUSTRIES = new Set(['tech', 'finance', 'creative', 'healthcare', 'general'])
+export const VALID_PERSONAS = new Set(['default', 'gordon_ramsay', 'supportive_mom', 'silicon_valley_vc', 'gen_z_intern', 'shakespeare'])
 export const VALID_REACTIONS = new Set(['fire', 'crying_laughing', 'ouch', 'facts', 'survived'])
 
 export const MAX_FILE_SIZE_MB = 5

@@ -21,6 +21,7 @@ model Roast {
 
   intensity String  @default("medium")
   industry  String?
+  persona   String?
   badges    Json    @default("[]")
 
   isHeadlinePublic Boolean @default(false) @map("is_headline_public")

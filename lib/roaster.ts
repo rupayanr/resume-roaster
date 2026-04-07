@@ -26,7 +26,8 @@ interface RoastResult {
 export async function generateRoast(
   resumeText: string,
   intensity: string = 'medium',
-  industry: string = 'general'
+  industry: string = 'general',
+  persona: string = 'default'
 ): Promise<RoastResult> {
   const apiKey = process.env.GROQ_API_KEY
   if (!apiKey) {
@@ -34,7 +35,7 @@ export async function generateRoast(
   }
 
   const client = new Groq({ apiKey })
-  const prompt = getRoastPrompt(resumeText, intensity, industry)
+  const prompt = getRoastPrompt(resumeText, intensity, industry, persona)
 
   // Adjust temperature based on intensity for more creative brutal roasts
   const temperature = intensity === 'mild' ? 0.1 : intensity === 'medium' ? 0.2 : 0.3

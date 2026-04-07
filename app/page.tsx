@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RotateCcw, Flame, Upload, Sparkles, Target } from 'lucide-react'
 import { Navbar } from './components/Layout/Navbar'
@@ -9,7 +9,9 @@ import { RoastCard } from './components/Roast/RoastCard'
 import { ShareButton } from './components/Share/ShareButton'
 import { HotTakesCarousel } from './components/HotTakes/HotTakesCarousel'
 import { ProcessingStepper, type ProcessingStep } from './components/Processing/ProcessingStepper'
-import type { RoastResponse, Industry } from '@/types'
+import type { RoastResponse, Industry, RoastPersona } from '@/types'
+import { RoastHistory } from './components/History/RoastHistory'
+import { saveToHistory, getHistory } from '@/lib/storage'
 
 export default function HomePage() {
   const [roast, setRoast] = useState<RoastResponse | null>(null)
@@ -17,6 +19,16 @@ export default function HomePage() {
   const [processingStep, setProcessingStep] = useState<ProcessingStep>('uploading')
   const [error, setError] = useState<string | null>(null)
   const [industry, setIndustry] = useState<Industry>('general')
+  const [persona, setPersona] = useState<RoastPersona>('default')
+  const [hasHistory, setHasHistory] = useState(false)
+
+  // Check for history on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const history = getHistory()
+      setHasHistory(history.length > 0)
+    }
+  }, [])
 
   const submitResume = useCallback(async (file: File) => {
     setIsLoading(true)
@@ -28,6 +40,7 @@ export default function HomePage() {
       formData.append('file', file)
       formData.append('intensity', 'medium')
       formData.append('industry', industry)
+      formData.append('persona', persona)
 
       // Simulate step progression
       setProcessingStep('parsing')
@@ -53,13 +66,23 @@ export default function HomePage() {
 
       const data = await response.json()
       setRoast(data)
+
+      // Save to history
+      saveToHistory({
+        date: new Date().toISOString(),
+        score: data.score,
+        shareId: data.share_id,
+        headline: data.headline,
+        persona: data.persona,
+      })
+      setHasHistory(true)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to roast resume'
       setError(message)
     } finally {
       setIsLoading(false)
     }
-  }, [industry])
+  }, [industry, persona])
 
   const reset = useCallback(() => {
     setRoast(null)
@@ -203,6 +226,8 @@ export default function HomePage() {
                   disabled={isLoading}
                   industry={industry}
                   onIndustryChange={setIndustry}
+                  persona={persona}
+                  onPersonaChange={setPersona}
                 />
               </div>
             </motion.div>
@@ -249,6 +274,18 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
+          </motion.div>
+        )}
+
+        {/* Roast History */}
+        {!roast && !isLoading && hasHistory && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mt-12"
+          >
+            <RoastHistory />
           </motion.div>
         )}
 

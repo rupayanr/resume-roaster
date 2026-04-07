@@ -3,13 +3,15 @@
 import { useDropzone } from 'react-dropzone'
 import { motion } from 'framer-motion'
 import { FileText, Briefcase, Code, DollarSign, Palette, Heart, Flame } from 'lucide-react'
-import type { Industry } from '@/types'
+import type { Industry, RoastPersona } from '@/types'
 
 interface DropZoneProps {
   onUpload: (file: File) => void
   disabled?: boolean
   industry: Industry
   onIndustryChange: (industry: Industry) => void
+  persona: RoastPersona
+  onPersonaChange: (persona: RoastPersona) => void
 }
 
 const INDUSTRY_OPTIONS: { value: Industry; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
@@ -20,11 +22,22 @@ const INDUSTRY_OPTIONS: { value: Industry; label: string; icon: React.ComponentT
   { value: 'healthcare', label: 'Healthcare', icon: Heart },
 ]
 
+const PERSONA_OPTIONS: { value: RoastPersona; emoji: string; label: string; description: string }[] = [
+  { value: 'default', emoji: '🔥', label: 'Classic', description: 'Brutally honest' },
+  { value: 'gordon_ramsay', emoji: '👨‍🍳', label: "Hell's Kitchen", description: "It's RAW!" },
+  { value: 'supportive_mom', emoji: '🤗', label: 'Supportive Mom', description: 'Gentle encouragement' },
+  { value: 'silicon_valley_vc', emoji: '💰', label: 'Shark Tank', description: "What's your ROI?" },
+  { value: 'gen_z_intern', emoji: '💀', label: 'Gen Z', description: 'No cap, lowkey mid' },
+  { value: 'shakespeare', emoji: '🎭', label: 'Shakespeare', description: 'Elizabethan drama' },
+]
+
 export function DropZone({
   onUpload,
   disabled,
   industry,
   onIndustryChange,
+  persona,
+  onPersonaChange,
 }: DropZoneProps) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { 'application/pdf': ['.pdf'] },
@@ -149,6 +162,40 @@ export function DropZone({
             >
               <Icon className="w-4 h-4" />
               <span className="font-medium">{label}</span>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* Persona Selector */}
+      <div className="pt-4">
+        <label className="block text-sm font-medium text-gray-300 mb-3">
+          Roast Style <span className="text-gray-500 font-normal">(pick your roaster)</span>
+        </label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {PERSONA_OPTIONS.map(({ value, emoji, label, description }) => (
+            <motion.button
+              key={value}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => onPersonaChange(value)}
+              disabled={disabled}
+              className={`
+                flex flex-col items-center gap-1 px-3 py-3 rounded-xl border transition-all duration-200
+                ${persona === value
+                  ? 'border-orange-500 bg-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.3)]'
+                  : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                }
+                ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+              `}
+            >
+              <span className="text-2xl">{emoji}</span>
+              <span className={`text-sm font-medium ${persona === value ? 'text-orange-400' : 'text-white'}`}>
+                {label}
+              </span>
+              <span className="text-xs text-gray-500 text-center">
+                {description}
+              </span>
             </motion.button>
           ))}
         </div>

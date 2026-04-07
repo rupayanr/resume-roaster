@@ -46,6 +46,7 @@ async function getRoast(shareId: string) {
     created_at: roast.createdAt.toISOString(),
     intensity: roast.intensity as 'mild' | 'medium' | 'brutal',
     industry: roast.industry || undefined,
+    persona: roast.persona as 'default' | 'gordon_ramsay' | 'supportive_mom' | 'silicon_valley_vc' | 'gen_z_intern' | 'shakespeare' | undefined,
     badges: (roast.badges || []) as Array<{
       id: string
       name: string
