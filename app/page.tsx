@@ -111,16 +111,14 @@ export default function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-10"
         >
-          {/* Fire badge */}
+          {/* Badge */}
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full border border-orange-500/30 mb-6"
+            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full border border-orange-500/30 mb-6"
             whileHover={{ scale: 1.05 }}
           >
-            <span className="text-2xl">🔥</span>
             <span className="text-orange-400 text-sm font-semibold tracking-wide">
               AI-POWERED ROASTS
             </span>
-            <span className="text-2xl">🔥</span>
           </motion.div>
 
           {/* Main headline */}
