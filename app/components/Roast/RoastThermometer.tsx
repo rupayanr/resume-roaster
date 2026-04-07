@@ -8,11 +8,11 @@ interface RoastThermometerProps {
 }
 
 const HEAT_LEVELS = [
-  { min: 0, max: 20, label: 'Ice Cold', color: 'from-cyan-500 to-blue-400', textColor: 'text-cyan-600', bgColor: 'bg-cyan-500', icon: Snowflake },
-  { min: 21, max: 40, label: 'Barely Warm', color: 'from-green-500 to-green-400', textColor: 'text-green-600', bgColor: 'bg-green-500', icon: Sun },
-  { min: 41, max: 60, label: 'Getting Toasty', color: 'from-yellow-500 to-amber-400', textColor: 'text-amber-600', bgColor: 'bg-amber-500', icon: Thermometer },
-  { min: 61, max: 80, label: 'Extra Crispy', color: 'from-orange-500 to-orange-400', textColor: 'text-orange-600', bgColor: 'bg-orange-500', icon: Flame },
-  { min: 81, max: 100, label: 'ABSOLUTELY COOKED', color: 'from-red-600 to-red-500', textColor: 'text-red-600', bgColor: 'bg-red-500', icon: Flame },
+  { min: 0, max: 20, label: 'Ice Cold', color: 'from-cyan-500 to-blue-400', textColor: 'text-cyan-400', bgColor: 'bg-cyan-500', icon: Snowflake },
+  { min: 21, max: 40, label: 'Barely Warm', color: 'from-green-500 to-green-400', textColor: 'text-green-400', bgColor: 'bg-green-500', icon: Sun },
+  { min: 41, max: 60, label: 'Getting Toasty', color: 'from-yellow-500 to-amber-400', textColor: 'text-amber-400', bgColor: 'bg-amber-500', icon: Thermometer },
+  { min: 61, max: 80, label: 'Extra Crispy', color: 'from-orange-500 to-orange-400', textColor: 'text-orange-400', bgColor: 'bg-orange-500', icon: Flame },
+  { min: 81, max: 100, label: 'ABSOLUTELY COOKED', color: 'from-red-600 to-red-500', textColor: 'text-red-400', bgColor: 'bg-red-500', icon: Flame },
 ]
 
 function getHeatLevel(score: number) {
@@ -36,7 +36,7 @@ export function RoastThermometer({ score }: RoastThermometerProps) {
       {/* Thermometer container */}
       <div className="relative w-20 h-48">
         {/* Thermometer body */}
-        <div className="absolute inset-x-0 top-0 bottom-10 mx-auto w-8 bg-gray-200 rounded-t-full overflow-hidden">
+        <div className="absolute inset-x-0 top-0 bottom-10 mx-auto w-8 bg-gray-700 rounded-t-full overflow-hidden">
           {/* Mercury fill */}
           <motion.div
             initial={{ height: 0 }}
@@ -48,7 +48,7 @@ export function RoastThermometer({ score }: RoastThermometerProps) {
           {/* Tick marks */}
           <div className="absolute inset-0 flex flex-col justify-between py-2 px-1">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="w-2 h-0.5 bg-gray-400" />
+              <div key={i} className="w-2 h-0.5 bg-gray-500" />
             ))}
           </div>
         </div>

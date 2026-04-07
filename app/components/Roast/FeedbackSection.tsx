@@ -5,21 +5,21 @@ import { CheckCircle, AlertCircle, Pencil, ChevronRight, Quote } from 'lucide-re
 import type { RoastSection } from '@/types'
 
 const iconMap: Record<string, React.ReactNode> = {
-  check: <CheckCircle className="w-5 h-5 text-emerald-600" />,
-  alert: <AlertCircle className="w-5 h-5 text-amber-600" />,
-  edit: <Pencil className="w-5 h-5 text-blue-600" />,
+  check: <CheckCircle className="w-5 h-5 text-emerald-400" />,
+  alert: <AlertCircle className="w-5 h-5 text-amber-400" />,
+  edit: <Pencil className="w-5 h-5 text-blue-400" />,
 }
 
 const bgColorMap: Record<string, string> = {
-  check: 'bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200',
-  alert: 'bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200',
-  edit: 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200',
+  check: 'bg-emerald-500/10 border-emerald-500/20',
+  alert: 'bg-amber-500/10 border-amber-500/20',
+  edit: 'bg-blue-500/10 border-blue-500/20',
 }
 
 const titleColorMap: Record<string, string> = {
-  check: 'text-emerald-800',
-  alert: 'text-amber-800',
-  edit: 'text-blue-800',
+  check: 'text-emerald-400',
+  alert: 'text-amber-400',
+  edit: 'text-blue-400',
 }
 
 const bulletColorMap: Record<string, string> = {
@@ -29,9 +29,9 @@ const bulletColorMap: Record<string, string> = {
 }
 
 const quoteStyleMap: Record<string, string> = {
-  check: 'bg-emerald-100/50 border-emerald-300 text-emerald-800',
-  alert: 'bg-amber-100/50 border-amber-300 text-amber-800',
-  edit: 'bg-blue-100/50 border-blue-300 text-blue-800',
+  check: 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300',
+  alert: 'bg-amber-500/20 border-amber-500/30 text-amber-300',
+  edit: 'bg-blue-500/20 border-blue-500/30 text-blue-300',
 }
 
 // Helper to detect and style quoted text
@@ -92,7 +92,7 @@ export function FeedbackSection({ title, icon, points }: RoastSection) {
               <span className={`flex-shrink-0 w-6 h-6 rounded-full ${bulletColor} text-white flex items-center justify-center mt-0.5 shadow-sm`}>
                 <ChevronRight className="w-3.5 h-3.5" />
               </span>
-              <p className="text-sm text-gray-700 leading-relaxed flex-1">
+              <p className="text-sm text-gray-300 leading-relaxed flex-1">
                 {formatPointText(pointText, iconKey)}
               </p>
             </motion.li>

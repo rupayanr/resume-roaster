@@ -22,8 +22,8 @@ export function ShareButton({ shareUrl, headline, score }: ShareButtonProps) {
   }
 
   const shareText = score !== undefined
-    ? `I got roasted! Score: ${score}/100 ${headline ? `- "${headline.slice(0, 50)}${headline.length > 50 ? '...' : ''}"` : ''}`
-    : 'Check out my resume roast!'
+    ? `I got roasted! 🔥 Score: ${score}/100 ${headline ? `- "${headline.slice(0, 50)}${headline.length > 50 ? '...' : ''}"` : ''}`
+    : 'Check out my resume roast! 🔥'
 
   const handleTwitterShare = () => {
     const twitterUrl = new URL('https://twitter.com/intent/tweet')
@@ -49,7 +49,7 @@ export function ShareButton({ shareUrl, headline, score }: ShareButtonProps) {
         className={`
           flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm
           transition-colors duration-200
-          bg-gray-100 text-gray-700 hover:bg-gray-200
+          bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600
         `}
       >
         <Share2 className="w-4 h-4" />
@@ -72,17 +72,17 @@ export function ShareButton({ shareUrl, headline, score }: ShareButtonProps) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-20"
+              className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-xl shadow-lg border border-gray-700 py-2 z-20"
             >
               {/* Copy Link */}
               <button
                 onClick={handleCopy}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
               >
                 {copied ? (
                   <>
-                    <Check className="w-4 h-4 text-emerald-600" />
-                    <span className="text-emerald-600">Copied!</span>
+                    <Check className="w-4 h-4 text-emerald-400" />
+                    <span className="text-emerald-400">Copied!</span>
                   </>
                 ) : (
                   <>
@@ -92,12 +92,12 @@ export function ShareButton({ shareUrl, headline, score }: ShareButtonProps) {
                 )}
               </button>
 
-              <div className="h-px bg-gray-100 my-1" />
+              <div className="h-px bg-gray-700 my-1" />
 
               {/* Twitter/X */}
               <button
                 onClick={handleTwitterShare}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
               >
                 <Twitter className="w-4 h-4" />
                 <span>Share on X</span>
@@ -106,7 +106,7 @@ export function ShareButton({ shareUrl, headline, score }: ShareButtonProps) {
               {/* LinkedIn */}
               <button
                 onClick={handleLinkedInShare}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
               >
                 <Linkedin className="w-4 h-4" />
                 <span>Share on LinkedIn</span>

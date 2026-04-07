@@ -3,22 +3,22 @@ import './globals.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://resumeroaster.rupayan.dev'),
-  title: 'Resume Roaster - Get Your Resume Roasted',
-  description: 'Upload your resume and get brutally honest AI feedback with actionable suggestions. Fun, useful, and free.',
+  title: 'Resume Roaster - Your resume sucks. Let AI tell you why.',
+  description: 'Upload your resume and get brutally honest AI feedback with actionable suggestions. No sugarcoating. No mercy. 🔥',
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',
     apple: '/favicon.svg',
   },
   openGraph: {
-    title: 'Resume Roaster',
-    description: 'Get your resume roasted by AI. Brutally honest feedback with actionable suggestions.',
+    title: 'Resume Roaster 🔥',
+    description: 'Your resume sucks. Let AI tell you why. Brutally honest feedback with actionable suggestions.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Resume Roaster',
-    description: 'Get your resume roasted by AI. Brutally honest feedback with actionable suggestions.',
+    title: 'Resume Roaster 🔥',
+    description: 'Your resume sucks. Let AI tell you why. Brutally honest feedback with actionable suggestions.',
   },
 }
 
@@ -28,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50 min-h-screen antialiased">
+    <html lang="en" className="dark">
+      <body className="bg-gray-950 min-h-screen antialiased text-gray-100">
         {children}
       </body>
     </html>

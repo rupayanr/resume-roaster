@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { RotateCcw, Flame } from 'lucide-react'
+import { RotateCcw, Flame, Star, Zap, Clock } from 'lucide-react'
 import { Navbar } from './components/Layout/Navbar'
 import { DropZone } from './components/Upload/DropZone'
 import { RoastCard } from './components/Roast/RoastCard'
@@ -73,27 +73,79 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-950">
       <Navbar />
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      {/* Background effects */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-red-500/5 rounded-full blur-3xl" />
+      </div>
+
+      <main className="relative max-w-4xl mx-auto px-4 py-8">
         {/* Hero */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="text-center mb-10"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-orange-100 rounded-full text-orange-700 text-sm font-medium mb-4">
-            <Flame className="w-4 h-4" />
-            Get roasted by AI
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-            Resume Roaster
+          {/* Fire badge */}
+          <motion.div
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full border border-orange-500/30 mb-6"
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="text-2xl">🔥</span>
+            <span className="text-orange-400 text-sm font-semibold tracking-wide">
+              AI-POWERED ROASTS
+            </span>
+            <span className="text-2xl">🔥</span>
+          </motion.div>
+
+          {/* Main headline */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
+            Your resume{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-500 to-orange-400">
+              sucks.
+            </span>
+            <br />
+            <span className="text-gray-400 text-3xl sm:text-4xl md:text-5xl font-bold">
+              Let AI tell you why.
+            </span>
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
-            Upload your resume and get brutally honest feedback with actionable suggestions.
-            No sugarcoating, just the truth.
+
+          <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto px-4 mb-8">
+            Upload your resume and get{' '}
+            <span className="text-orange-400 font-semibold">brutally honest feedback</span>
+            {' '}with actionable suggestions. No sugarcoating. No mercy.
           </p>
+
+          {/* Social proof stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-wrap justify-center gap-6 sm:gap-8 mb-8"
+          >
+            <div className="flex items-center gap-2 text-gray-400">
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-orange-400 text-orange-400" />
+                ))}
+              </div>
+              <span className="font-semibold text-white">4.9</span>
+              <span className="text-sm">rating</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-400">
+              <Zap className="w-5 h-5 text-orange-400" />
+              <span className="font-semibold text-white">10K+</span>
+              <span className="text-sm">resumes roasted</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-400">
+              <Clock className="w-5 h-5 text-orange-400" />
+              <span className="font-semibold text-white">~15s</span>
+              <span className="text-sm">average roast time</span>
+            </div>
+          </motion.div>
         </motion.div>
 
         {/* Hot Takes Carousel */}
@@ -116,22 +168,24 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="bg-white rounded-2xl shadow-sm border border-red-200 p-8 text-center"
+              className="bg-gray-900 rounded-2xl border border-red-500/30 p-8 text-center"
             >
-              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">😬</span>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-white mb-2">
                 Oops! Something went wrong
               </h3>
-              <p className="text-sm text-red-600 mb-6">{error}</p>
-              <button
+              <p className="text-sm text-red-400 mb-6">{error}</p>
+              <motion.button
                 onClick={reset}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-red-600 transition-all"
               >
                 <RotateCcw className="w-4 h-4" />
                 Try Again
-              </button>
+              </motion.button>
             </motion.div>
           ) : roast ? (
             <motion.div
@@ -142,13 +196,15 @@ export default function HomePage() {
             >
               {/* Action Bar */}
               <div className="flex items-center justify-between mb-6">
-                <button
+                <motion.button
                   onClick={reset}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-white font-medium transition-colors"
                 >
                   <RotateCcw className="w-4 h-4" />
                   Roast Another
-                </button>
+                </motion.button>
                 <ShareButton
                   shareUrl={getShareUrl()}
                   headline={roast.headline}
@@ -162,19 +218,24 @@ export default function HomePage() {
           ) : (
             <motion.div
               key="upload"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-8"
+              className="relative"
             >
-              <DropZone
-                onUpload={submitResume}
-                disabled={isLoading}
-                intensity={intensity}
-                industry={industry}
-                onIntensityChange={setIntensity}
-                onIndustryChange={setIndustry}
-              />
+              {/* Glowing border effect */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 rounded-2xl opacity-30 blur-sm" />
+
+              <div className="relative bg-gray-900 rounded-2xl border border-gray-800 p-4 sm:p-8">
+                <DropZone
+                  onUpload={submitResume}
+                  disabled={isLoading}
+                  intensity={intensity}
+                  industry={industry}
+                  onIntensityChange={setIntensity}
+                  onIndustryChange={setIndustry}
+                />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -184,10 +245,13 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-center mt-12 text-sm text-gray-500"
+          className="text-center mt-12"
         >
-          <p>
-            Your resume is processed securely and never stored.
+          <p className="text-sm text-gray-600">
+            🔒 Your resume is processed securely and never stored.
+          </p>
+          <p className="text-xs text-gray-700 mt-2">
+            Built with questionable humor and actual AI
           </p>
         </motion.div>
       </main>

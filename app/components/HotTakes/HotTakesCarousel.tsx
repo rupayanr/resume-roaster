@@ -67,13 +67,16 @@ export function HotTakesCarousel({ autoRotateInterval = 5000 }: HotTakesCarousel
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl border border-orange-200 p-6 mb-8"
+      className="relative bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-2xl border border-orange-500/20 p-6 mb-8 overflow-hidden"
     >
+      {/* Subtle glow effect */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl" />
+
       {/* Header */}
-      <div className="flex items-center gap-2 mb-4">
-        <div className="flex items-center gap-1.5 px-3 py-1 bg-orange-100 rounded-full">
-          <Flame className="w-4 h-4 text-orange-600" />
-          <span className="text-sm font-semibold text-orange-700">Hot Takes</span>
+      <div className="flex items-center gap-2 mb-4 relative z-10">
+        <div className="flex items-center gap-1.5 px-3 py-1 bg-orange-500/20 rounded-full border border-orange-500/30">
+          <Flame className="w-4 h-4 text-orange-400" />
+          <span className="text-sm font-semibold text-orange-400">Hot Takes</span>
         </div>
         <span className="text-xs text-gray-500">Real roasts from real resumes</span>
       </div>
@@ -90,16 +93,16 @@ export function HotTakesCarousel({ autoRotateInterval = 5000 }: HotTakesCarousel
             className="absolute inset-0"
           >
             <div className="flex items-start gap-3">
-              <Quote className="w-8 h-8 text-orange-300 flex-shrink-0 mt-1" />
+              <Quote className="w-8 h-8 text-orange-500/40 flex-shrink-0 mt-1" />
               <div>
-                <p className="text-lg text-gray-800 font-medium leading-relaxed">
+                <p className="text-lg text-gray-200 font-medium leading-relaxed">
                   {currentTake.headline}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-sm text-gray-500">Score:</span>
                   <span className={`
                     text-sm font-bold
-                    ${currentTake.score < 40 ? 'text-red-600' : currentTake.score < 60 ? 'text-amber-600' : 'text-green-600'}
+                    ${currentTake.score < 40 ? 'text-red-400' : currentTake.score < 60 ? 'text-amber-400' : 'text-emerald-400'}
                   `}>
                     {currentTake.score}/100
                   </span>
@@ -112,14 +115,15 @@ export function HotTakesCarousel({ autoRotateInterval = 5000 }: HotTakesCarousel
 
       {/* Progress dots */}
       {hotTakes.length > 1 && (
-        <div className="flex justify-center gap-1.5 mt-4">
+        <div className="flex justify-center gap-1.5 mt-4 relative z-10">
           {hotTakes.map((_, index) => (
-            <button
+            <motion.button
               key={index}
               onClick={() => setCurrentIndex(index)}
+              whileHover={{ scale: 1.2 }}
               className={`
-                w-2 h-2 rounded-full transition-all duration-300
-                ${index === currentIndex ? 'bg-orange-500 w-4' : 'bg-orange-200 hover:bg-orange-300'}
+                h-2 rounded-full transition-all duration-300
+                ${index === currentIndex ? 'bg-orange-500 w-6' : 'bg-gray-700 w-2 hover:bg-gray-600'}
               `}
             />
           ))}

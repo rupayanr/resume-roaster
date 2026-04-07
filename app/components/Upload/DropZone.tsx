@@ -2,7 +2,7 @@
 
 import { useDropzone } from 'react-dropzone'
 import { motion } from 'framer-motion'
-import { Upload, FileText, Briefcase, Code, DollarSign, Palette, Heart } from 'lucide-react'
+import { Upload, FileText, Briefcase, Code, DollarSign, Palette, Heart, Flame } from 'lucide-react'
 import { IntensityDial } from './IntensityDial'
 import type { RoastIntensity, Industry } from '@/types'
 
@@ -44,12 +44,107 @@ export function DropZone({
 
   return (
     <div className="space-y-6">
+      {/* Drop Zone - Prominent at top */}
+      <motion.div
+        whileHover={disabled ? {} : { scale: 1.005 }}
+        whileTap={disabled ? {} : { scale: 0.995 }}
+      >
+        <div
+          {...getRootProps()}
+          className={`
+            relative overflow-hidden
+            border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer
+            transition-all duration-300 ease-out
+            ${isDragActive
+              ? 'border-orange-500 bg-orange-500/10'
+              : 'border-gray-700 bg-gray-800/50 hover:border-orange-500/50 hover:bg-gray-800'}
+            ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+          `}
+        >
+          <input {...getInputProps()} />
+
+          {/* Animated fire particles on drag */}
+          {isDragActive && (
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              {[...Array(6)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-3 h-3 bg-orange-500/60 rounded-full"
+                  style={{
+                    left: `${15 + i * 15}%`,
+                    bottom: '0%',
+                  }}
+                  animate={{
+                    y: [0, -100, -200],
+                    opacity: [0, 1, 0],
+                    scale: [0.5, 1, 0.5],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 1.5,
+                    delay: i * 0.2,
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          <motion.div
+            initial={{ scale: 1 }}
+            animate={{ scale: isDragActive ? 1.1 : 1 }}
+            className="flex flex-col items-center relative z-10"
+          >
+            <motion.div
+              className={`
+                w-20 h-20 rounded-2xl flex items-center justify-center mb-4
+                ${isDragActive
+                  ? 'bg-gradient-to-br from-orange-500 to-red-500'
+                  : 'bg-gray-700/50 group-hover:bg-gray-700'}
+              `}
+              animate={isDragActive ? { rotate: [0, -5, 5, 0] } : {}}
+              transition={{ repeat: isDragActive ? Infinity : 0, duration: 0.5 }}
+            >
+              {isDragActive ? (
+                <Flame className="w-10 h-10 text-white" />
+              ) : (
+                <Upload className="w-10 h-10 text-gray-400" />
+              )}
+            </motion.div>
+
+            {isDragActive ? (
+              <p className="text-xl text-orange-400 font-bold">
+                Drop it like it&apos;s hot! 🔥
+              </p>
+            ) : (
+              <div>
+                <p className="text-xl text-white font-semibold mb-2">
+                  Drop your resume here
+                </p>
+                <p className="text-gray-400">
+                  or <span className="text-orange-400 font-medium hover:text-orange-300 transition-colors">browse</span> to upload
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 mt-4">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-800 text-xs text-gray-400">
+                <FileText className="w-3 h-3" />
+                PDF only
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-800 text-xs text-gray-400">
+                Max 5MB
+              </span>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+
       {/* Settings Row - stacked on mobile, side by side on desktop */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 pt-2">
         {/* Industry Selector - left on desktop */}
         <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Industry Focus <span className="text-gray-400 font-normal">(optional)</span>
+          <label className="block text-sm font-medium text-gray-300 mb-3">
+            Industry Focus <span className="text-gray-500 font-normal">(optional)</span>
           </label>
           <div className="flex flex-wrap gap-2">
             {INDUSTRY_OPTIONS.map(({ value, label, icon: Icon }) => (
@@ -62,8 +157,8 @@ export function DropZone({
                 className={`
                   flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-200 text-sm
                   ${industry === value
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                    ? 'border-orange-500 bg-orange-500/20 text-orange-400'
+                    : 'border-gray-700 bg-gray-800/50 text-gray-400 hover:border-gray-600 hover:text-gray-300'
                   }
                   ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                 `}
@@ -84,63 +179,6 @@ export function DropZone({
           />
         </div>
       </div>
-
-      {/* Drop Zone */}
-      <motion.div
-        whileHover={disabled ? {} : { scale: 1.01 }}
-        whileTap={disabled ? {} : { scale: 0.99 }}
-      >
-        <div
-          {...getRootProps()}
-          className={`
-            relative overflow-hidden
-            border-2 border-dashed rounded-2xl p-6 sm:p-12 text-center cursor-pointer
-            transition-all duration-300 ease-out
-            ${isDragActive
-              ? 'border-blue-500 bg-blue-50'
-              : 'border-gray-300 bg-white hover:border-blue-400 hover:bg-gray-50'}
-            ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-          `}
-        >
-          <input {...getInputProps()} />
-
-          <motion.div
-            initial={{ scale: 1 }}
-            animate={{ scale: isDragActive ? 1.1 : 1 }}
-            className="flex flex-col items-center"
-          >
-            <div className={`
-              w-16 h-16 rounded-2xl flex items-center justify-center mb-4
-              ${isDragActive ? 'bg-blue-100' : 'bg-gray-100'}
-            `}>
-              {isDragActive ? (
-                <FileText className="w-8 h-8 text-blue-600" />
-              ) : (
-                <Upload className="w-8 h-8 text-gray-500" />
-              )}
-            </div>
-
-            {isDragActive ? (
-              <p className="text-lg text-blue-600 font-medium">
-                Drop your resume here
-              </p>
-            ) : (
-              <div>
-                <p className="text-lg text-gray-700 font-medium">
-                  Drop your resume PDF here
-                </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  or <span className="text-blue-600 font-medium">browse</span> to upload
-                </p>
-              </div>
-            )}
-
-            <p className="text-xs text-gray-400 mt-4">
-              PDF files only, max 5MB
-            </p>
-          </motion.div>
-        </div>
-      </motion.div>
     </div>
   )
 }

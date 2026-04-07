@@ -28,11 +28,11 @@ function getTipText(tip: unknown): string {
 function getIntensityLabel(intensity: string) {
   switch (intensity) {
     case 'mild':
-      return { label: 'Mild Roast', icon: Snowflake, color: 'text-blue-600 bg-blue-50 border-blue-200' }
+      return { label: 'Mild Roast', icon: Snowflake, color: 'text-cyan-400 bg-cyan-500/20 border-cyan-500/30' }
     case 'brutal':
-      return { label: 'Brutal Roast', icon: Flame, color: 'text-red-600 bg-red-50 border-red-200' }
+      return { label: 'Brutal Roast', icon: Flame, color: 'text-red-400 bg-red-500/20 border-red-500/30' }
     default:
-      return { label: 'Medium Roast', icon: Thermometer, color: 'text-amber-600 bg-amber-50 border-amber-200' }
+      return { label: 'Medium Roast', icon: Thermometer, color: 'text-amber-400 bg-amber-500/20 border-amber-500/30' }
   }
 }
 
@@ -52,7 +52,7 @@ export function RoastCard({ roast }: RoastCardProps) {
           className="space-y-6"
         >
           {/* Score Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+          <div className="bg-gray-900 rounded-2xl border border-gray-800 p-8">
             {/* Intensity badge */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -83,7 +83,7 @@ export function RoastCard({ roast }: RoastCardProps) {
             >
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                className="inline-flex items-center gap-1.5 text-sm text-orange-400 hover:text-orange-300 font-medium transition-colors"
               >
                 <Info className="w-4 h-4" />
                 How we score
@@ -97,7 +97,7 @@ export function RoastCard({ roast }: RoastCardProps) {
               transition={{ delay: 0.4 }}
               className="mt-4 text-center"
             >
-              <p className="text-lg text-gray-700 font-medium leading-relaxed max-w-2xl mx-auto">
+              <p className="text-lg text-gray-300 font-medium leading-relaxed max-w-2xl mx-auto">
                 &ldquo;{roast.headline || 'Your resume has been analyzed.'}&rdquo;
               </p>
             </motion.div>
@@ -117,7 +117,7 @@ export function RoastCard({ roast }: RoastCardProps) {
                   { key: 'ats', label: 'ATS', color: 'bg-amber-500' },
                 ].map(({ key, label, color }) => (
                   <div key={key} className="text-center">
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-1">
+                    <div className="h-2 bg-gray-700 rounded-full overflow-hidden mb-1">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${roast.score_breakdown?.[key as keyof typeof roast.score_breakdown] ?? 0}%` }}
@@ -126,7 +126,7 @@ export function RoastCard({ roast }: RoastCardProps) {
                       />
                     </div>
                     <p className="text-xs text-gray-500">{label}</p>
-                    <p className="text-sm font-semibold text-gray-700">
+                    <p className="text-sm font-semibold text-gray-300">
                       {roast.score_breakdown?.[key as keyof typeof roast.score_breakdown] ?? 0}
                     </p>
                   </div>
@@ -141,9 +141,9 @@ export function RoastCard({ roast }: RoastCardProps) {
           </div>
 
           {/* Feedback Sections */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-5">
-              <FileText className="w-5 h-5 text-gray-600" />
+          <div className="bg-gray-900 rounded-2xl border border-gray-800 p-6">
+            <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-5">
+              <FileText className="w-5 h-5 text-gray-400" />
               Detailed Analysis
             </h2>
             <div className="grid gap-4">
@@ -155,7 +155,7 @@ export function RoastCard({ roast }: RoastCardProps) {
 
           {/* Suggestions */}
           {(roast.suggestions?.length > 0) && (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-gray-900 rounded-2xl border border-gray-800 p-6">
               <Suggestions suggestions={roast.suggestions || []} />
             </div>
           )}
@@ -166,19 +166,19 @@ export function RoastCard({ roast }: RoastCardProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border border-indigo-200 p-6"
+              className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl border border-indigo-500/20 p-6"
             >
-              <h3 className="text-lg font-semibold text-indigo-900 flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-indigo-600" />
+              <h3 className="text-lg font-semibold text-indigo-300 flex items-center gap-2 mb-4">
+                <Sparkles className="w-5 h-5 text-indigo-400" />
                 ATS Optimization Tips
               </h3>
               <ul className="space-y-2">
                 {atsTips.map((tip, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-3 text-sm text-indigo-800"
+                    className="flex items-start gap-3 text-sm text-indigo-200"
                   >
-                    <span className="w-5 h-5 rounded-full bg-indigo-200 text-indigo-700 flex items-center justify-center text-xs font-medium flex-shrink-0 mt-0.5">
+                    <span className="w-5 h-5 rounded-full bg-indigo-500/30 text-indigo-300 flex items-center justify-center text-xs font-medium flex-shrink-0 mt-0.5">
                       {index + 1}
                     </span>
                     {getTipText(tip)}
