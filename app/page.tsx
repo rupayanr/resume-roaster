@@ -2,21 +2,20 @@
 
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { RotateCcw, Flame, Star, Zap, Clock } from 'lucide-react'
+import { RotateCcw, Flame, Upload, Sparkles, Target } from 'lucide-react'
 import { Navbar } from './components/Layout/Navbar'
 import { DropZone } from './components/Upload/DropZone'
 import { RoastCard } from './components/Roast/RoastCard'
 import { ShareButton } from './components/Share/ShareButton'
 import { HotTakesCarousel } from './components/HotTakes/HotTakesCarousel'
 import { ProcessingStepper, type ProcessingStep } from './components/Processing/ProcessingStepper'
-import type { RoastResponse, RoastIntensity, Industry } from '@/types'
+import type { RoastResponse, Industry } from '@/types'
 
 export default function HomePage() {
   const [roast, setRoast] = useState<RoastResponse | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [processingStep, setProcessingStep] = useState<ProcessingStep>('uploading')
   const [error, setError] = useState<string | null>(null)
-  const [intensity, setIntensity] = useState<RoastIntensity>('medium')
   const [industry, setIndustry] = useState<Industry>('general')
 
   const submitResume = useCallback(async (file: File) => {
@@ -27,7 +26,7 @@ export default function HomePage() {
     try {
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('intensity', intensity)
+      formData.append('intensity', 'medium')
       formData.append('industry', industry)
 
       // Simulate step progression
@@ -60,7 +59,7 @@ export default function HomePage() {
     } finally {
       setIsLoading(false)
     }
-  }, [intensity, industry])
+  }, [industry])
 
   const reset = useCallback(() => {
     setRoast(null)
@@ -103,49 +102,21 @@ export default function HomePage() {
 
           {/* Main headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-tight">
-            Your resume{' '}
+            Get your resume{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-500 to-orange-400">
-              sucks.
+              roasted
             </span>
             <br />
             <span className="text-gray-400 text-3xl sm:text-4xl md:text-5xl font-bold">
-              Let AI tell you why.
+              by AI that doesn&apos;t hold back.
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto px-4 mb-8">
+          <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto px-4">
             Upload your resume and get{' '}
             <span className="text-orange-400 font-semibold">brutally honest feedback</span>
-            {' '}with actionable suggestions. No sugarcoating. No mercy.
+            {' '}with real suggestions to make it better. The truth hurts, but it works.
           </p>
-
-          {/* Social proof stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-6 sm:gap-8 mb-8"
-          >
-            <div className="flex items-center gap-2 text-gray-400">
-              <div className="flex items-center gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-orange-400 text-orange-400" />
-                ))}
-              </div>
-              <span className="font-semibold text-white">4.9</span>
-              <span className="text-sm">rating</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-400">
-              <Zap className="w-5 h-5 text-orange-400" />
-              <span className="font-semibold text-white">10K+</span>
-              <span className="text-sm">resumes roasted</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-400">
-              <Clock className="w-5 h-5 text-orange-400" />
-              <span className="font-semibold text-white">~15s</span>
-              <span className="text-sm">average roast time</span>
-            </div>
-          </motion.div>
         </motion.div>
 
         {/* Hot Takes Carousel */}
@@ -230,15 +201,56 @@ export default function HomePage() {
                 <DropZone
                   onUpload={submitResume}
                   disabled={isLoading}
-                  intensity={intensity}
                   industry={industry}
-                  onIntensityChange={setIntensity}
                   onIndustryChange={setIndustry}
                 />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* How It Works */}
+        {!roast && !isLoading && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-16"
+          >
+            <h2 className="text-2xl font-bold text-white text-center mb-8">
+              How It Works
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6 text-center">
+                <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Upload className="w-6 h-6 text-orange-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">1. Upload</h3>
+                <p className="text-gray-400 text-sm">
+                  Drop your resume PDF into the fire. We accept any format, any length.
+                </p>
+              </div>
+              <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6 text-center">
+                <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-6 h-6 text-orange-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">2. Get Roasted</h3>
+                <p className="text-gray-400 text-sm">
+                  AI analyzes your resume and delivers honest feedback with a side of humor.
+                </p>
+              </div>
+              <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6 text-center">
+                <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Target className="w-6 h-6 text-orange-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">3. Improve</h3>
+                <p className="text-gray-400 text-sm">
+                  Get actionable suggestions to fix what&apos;s broken and land more interviews.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Footer */}
         <motion.div
@@ -248,7 +260,7 @@ export default function HomePage() {
           className="text-center mt-12"
         >
           <p className="text-sm text-gray-600">
-            🔒 Your resume is processed securely and never stored.
+            Your resume is processed securely and never stored.
           </p>
           <p className="text-xs text-gray-700 mt-2">
             Built with questionable humor and actual AI
