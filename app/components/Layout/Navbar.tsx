@@ -22,9 +22,6 @@ export function Navbar() {
               </span>
             </Link>
           </div>
-          <div className="flex items-center">
-            <span className="text-2xl">🔥</span>
-          </div>
         </div>
       </div>
     </nav>
