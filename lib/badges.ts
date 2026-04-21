@@ -137,8 +137,6 @@ function estimateLength(text: string): number {
 }
 
 function hasEmojis(text: string): boolean {
-  // Check for common emoji ranges
-  // eslint-disable-next-line no-control-regex
   const emojiPattern = /[\uD83C-\uDBFF\uDC00-\uDFFF]|\u00A9|\u00AE|[\u2000-\u3300]|\uD83C[\uD000-\uDFFF]|\uD83D[\uD000-\uDFFF]|\uD83E[\uD000-\uDFFF]/
   return emojiPattern.test(text)
 }
